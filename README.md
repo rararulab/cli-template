@@ -42,6 +42,56 @@ just pre-commit   # All pre-commit checks
 just build        # Build debug binary
 ```
 
+## Agent Backend
+
+Invoke local AI agent CLIs without implementing LLM API integration. The agent module spawns CLI tools as child processes with streaming output and inactivity timeout.
+
+### Usage
+
+```bash
+# Use default backend (claude)
+{{project-name}} agent "explain this codebase"
+
+# Override backend
+{{project-name}} agent --backend codex "refactor main.rs"
+{{project-name}} agent --backend gemini "summarize README"
+```
+
+### Supported Backends
+
+| Backend | CLI Tool | Notes |
+|---------|----------|-------|
+| `claude` (default) | `claude` | Anthropic Claude Code |
+| `kiro` | `kiro` | AWS Kiro |
+| `gemini` | `gemini` | Google Gemini CLI |
+| `codex` | `codex` | OpenAI Codex CLI |
+| `amp` | `amp` | Sourcegraph Amp |
+| `copilot` | `gh copilot` | GitHub Copilot |
+| `opencode` | `opencode` | OpenCode |
+| `pi` | `pi` | Inflection Pi |
+| `roo` | `roo` | Roo Code |
+| `custom` | (configurable) | Bring your own CLI |
+
+### Configuration
+
+Config file at `~/.{{project-name}}/config.toml`:
+
+```toml
+[agent]
+backend = "claude"          # Backend name or "custom"
+# command = "/path/to/cli"  # Override binary path
+# args = ["--flag"]         # Extra CLI arguments
+# prompt_mode = "arg"       # "arg" (default) or "stdin"
+# idle_timeout_secs = 30    # Kill after N seconds of no output (0 = disable)
+```
+
+Override via CLI:
+
+```bash
+{{project-name}} config set agent.backend gemini
+{{project-name}} config set agent.idle_timeout_secs 60
+```
+
 ## Claude Code Integration
 
 Built-in `/dev` skill for autonomous development pipeline:
@@ -64,6 +114,11 @@ src/
 ├── lib.rs          # Public module exports
 ├── cli/
 │   └── mod.rs      # Clap CLI definitions
+├── agent/
+│   ├── mod.rs      # Re-exports
+│   ├── backend.rs  # Backend presets and command building
+│   ├── config.rs   # TOML [agent] config
+│   └── executor.rs # Process spawning and streaming
 ├── error.rs        # Snafu error types
 ├── app_config.rs   # TOML config with OnceLock
 ├── paths.rs        # Centralized data directory paths
