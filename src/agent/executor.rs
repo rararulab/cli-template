@@ -4,13 +4,14 @@
 //! Supports optional execution timeout with graceful SIGTERM termination.
 //! Ported from ralph-orchestrator.
 
+use std::io::Write;
+use std::process::Stdio;
+use std::time::Duration;
+
 #[cfg(unix)]
 use nix::sys::signal::{Signal, kill};
 #[cfg(unix)]
 use nix::unistd::Pid;
-use std::io::Write;
-use std::process::Stdio;
-use std::time::Duration;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWriteExt, BufReader};
 use tokio::process::Command;
 use tracing::{debug, warn};
@@ -20,7 +21,7 @@ use super::backend::CliBackend;
 use super::backend::{OutputFormat, PromptMode};
 
 /// Result of a CLI execution.
-#[derive(Debug)]
+#[derive(Debug, bon::Builder)]
 pub struct ExecutionResult {
     /// The full output from the CLI.
     pub output: String,
@@ -271,7 +272,7 @@ fn join_error_to_io(error: tokio::task::JoinError) -> std::io::Error {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{CliBackend, CliExecutor, Duration, OutputFormat, PromptMode};
 
     #[tokio::test]
     async fn test_execute_echo() {
