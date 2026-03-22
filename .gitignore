@@ -1,7 +1,8 @@
 # Rust
 /target/
 /bin/
-Cargo.lock
+# NOTE: Cargo.lock is intentionally tracked for reproducible builds (binary crate).
+# It will be generated after template instantiation.
 
 # IDE
 .idea/

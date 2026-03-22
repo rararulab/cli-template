@@ -1,11 +1,9 @@
-mod app_config;
-mod cli;
-mod error;
-mod http;
-mod paths;
-
 use clap::Parser;
-use cli::{Cli, Command};
+use snafu::ResultExt;
+
+use {{crate_name}}::app_config;
+use {{crate_name}}::cli::{Cli, Command, ConfigAction};
+use {{crate_name}}::error::{self, ConfigSnafu, IoSnafu};
 
 #[tokio::main]
 async fn main() {
@@ -16,7 +14,7 @@ async fn main() {
         )
         .init();
 
-    if let Err(e) = run().await {
+    if let Err(e) = run() {
         eprintln!("Error: {e}");
         println!(
             "{}",
@@ -26,31 +24,31 @@ async fn main() {
     }
 }
 
-async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
+fn run() -> error::Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
         Command::Config { action } => match action {
-            cli::ConfigAction::Set { key, value } => {
+            ConfigAction::Set { key, value } => {
                 let mut cfg = app_config::load().clone();
-                set_config_field(&mut cfg, &key, &value);
-                app_config::save(&cfg)?;
+                set_config_field(&mut cfg, &key, &value)?;
+                app_config::save(&cfg).context(IoSnafu)?;
                 eprintln!("set {key} = {value}");
                 println!(
                     "{}",
                     serde_json::json!({"ok": true, "action": "config_set", "key": key, "value": value})
                 );
             }
-            cli::ConfigAction::Get { key } => {
+            ConfigAction::Get { key } => {
                 let cfg = app_config::load();
-                let value = get_config_field(cfg, &key);
+                let value = get_config_field(cfg, &key)?;
                 let display_value = value.as_deref().unwrap_or("(not set)");
                 println!(
                     "{}",
                     serde_json::json!({"ok": true, "action": "config_get", "key": key, "value": display_value})
                 );
             }
-            cli::ConfigAction::List => {
+            ConfigAction::List => {
                 let cfg = app_config::load();
                 let entries = config_as_map(cfg);
                 let map: serde_json::Map<String, serde_json::Value> = entries
@@ -77,18 +75,19 @@ async fn run() -> std::result::Result<(), Box<dyn std::error::Error>> {
 }
 
 /// Set a config field by dotted key path.
-fn set_config_field(cfg: &mut app_config::AppConfig, key: &str, value: &str) {
+fn set_config_field(cfg: &mut app_config::AppConfig, key: &str, value: &str) -> error::Result<()> {
     match key {
         "example.setting" => cfg.example.setting = value.to_string(),
-        _ => eprintln!("warning: unknown config key: {key}"),
+        _ => return ConfigSnafu { message: format!("unknown config key: {key}") }.fail(),
     }
+    Ok(())
 }
 
 /// Get a config field by dotted key path.
-fn get_config_field(cfg: &app_config::AppConfig, key: &str) -> Option<String> {
+fn get_config_field(cfg: &app_config::AppConfig, key: &str) -> error::Result<Option<String>> {
     match key {
-        "example.setting" => Some(cfg.example.setting.clone()),
-        _ => None,
+        "example.setting" => Ok(Some(cfg.example.setting.clone())),
+        _ => ConfigSnafu { message: format!("unknown config key: {key}") }.fail(),
     }
 }
 
