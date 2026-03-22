@@ -42,6 +42,20 @@ just pre-commit   # All pre-commit checks
 just build        # Build debug binary
 ```
 
+## Claude Code Integration
+
+Built-in `/dev` skill for autonomous development pipeline:
+
+```
+/dev <requirement>        # Full cycle: design → implement → review → ship
+/dev --quick <requirement> # Skip design & review for trivial changes
+```
+
+Includes:
+- `CLAUDE.md` with project conventions and code style guides
+- `/dev` skill with subagent prompts for implementation, code review, and design review
+- Development guides: workflow, commit style, Rust style, code comments, anti-patterns
+
 ## Project Structure
 
 ```
@@ -54,4 +68,19 @@ src/
 ├── app_config.rs   # TOML config with OnceLock
 ├── paths.rs        # Centralized data directory paths
 └── http.rs         # Shared reqwest HTTP clients
+
+.claude/
+└── skills/
+    └── dev/        # /dev autonomous development pipeline
+        ├── SKILL.md
+        └── references/
+            ├── templates.md
+            └── subagent-prompts.md
+
+docs/guides/        # Development conventions
+├── workflow.md     # Issue → worktree → PR → merge
+├── commit-style.md # Conventional commits
+├── rust-style.md   # Snafu, bon, functional style
+├── code-comments.md
+└── anti-patterns.md
 ```
