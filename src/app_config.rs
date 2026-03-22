@@ -31,6 +31,11 @@ impl Default for ExampleConfig {
 }
 
 /// Load config from TOML file, falling back to defaults.
+///
+/// The result is cached in a `OnceLock` — subsequent calls return the same
+/// value even after [`save`]. This is fine for CLI usage (one command per
+/// process) but callers using this as a library should be aware of the
+/// caching behavior.
 pub fn load() -> &'static AppConfig {
     APP_CONFIG.get_or_init(|| {
         let path = crate::paths::config_file();

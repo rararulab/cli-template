@@ -7,6 +7,8 @@ license = "MIT"
 repository = "https://github.com/rararulab/{{project-name}}"
 
 [dependencies]
+# Add `bon = "3"` when you have structs with 3+ fields (see docs/guides/rust-style.md)
+# Add `chrono = { version = "0.4", features = ["serde"] }` when you need date/time
 clap = { version = "4", features = ["derive"] }
 config = "0.15"
 dirs = "6"

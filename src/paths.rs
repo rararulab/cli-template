@@ -13,6 +13,10 @@ static DATA_DIR: OnceLock<PathBuf> = OnceLock::new();
 /// Root data directory, resolved in order:
 /// 1. `APP_DATA_DIR` env var (must be non-empty and an absolute path)
 /// 2. `~/.{{project-name}}`
+///
+/// # Panics
+/// Panics if `APP_DATA_DIR` is set but empty or not an absolute path,
+/// or if no home directory can be resolved and `APP_DATA_DIR` is unset.
 pub fn data_dir() -> &'static Path {
     DATA_DIR.get_or_init(|| {
         if let Ok(dir) = std::env::var("APP_DATA_DIR") {

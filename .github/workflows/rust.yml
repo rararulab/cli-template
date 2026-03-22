@@ -34,7 +34,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Run clippy
-        run: cargo clippy --all-targets --no-deps -- -D warnings
+        run: cargo clippy --all-targets --all-features --no-deps -- -D warnings
 
   docs:
     name: Documentation
