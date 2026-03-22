@@ -4,6 +4,8 @@ use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
 
+use crate::agent::AgentConfig;
+
 static APP_CONFIG: OnceLock<AppConfig> = OnceLock::new();
 
 /// Application configuration.
@@ -12,6 +14,8 @@ static APP_CONFIG: OnceLock<AppConfig> = OnceLock::new();
 pub struct AppConfig {
     /// Example configuration section.
     pub example: ExampleConfig,
+    /// Agent backend configuration.
+    pub agent: AgentConfig,
 }
 
 /// Example configuration section — replace with your own.

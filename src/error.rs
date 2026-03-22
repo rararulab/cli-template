@@ -16,6 +16,17 @@ pub enum AppError {
 
     #[snafu(display("config error: {message}"))]
     Config { message: String },
+
+    #[snafu(display("agent CLI '{command}' not found — is it installed and on PATH?"))]
+    AgentNotFound { command: String },
+
+    #[snafu(display("agent execution failed: {source}"))]
+    AgentExecution { source: std::io::Error },
+
+    #[snafu(display("agent backend error: {source}"))]
+    AgentBackend {
+        source: crate::agent::backend::BackendError,
+    },
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;
