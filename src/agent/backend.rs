@@ -11,6 +11,9 @@ use tempfile::NamedTempFile;
 
 use super::config::AgentConfig;
 
+/// Module-level result type.
+pub type Result<T> = std::result::Result<T, BackendError>;
+
 /// Output format supported by a CLI backend.
 ///
 /// This allows adapters to declare whether they emit structured JSON
@@ -78,7 +81,7 @@ impl CliBackend {
     /// # Errors
     /// Returns [`BackendError`] if the backend is "custom" but no command is
     /// specified, or if the backend name is unrecognized.
-    pub fn from_agent_config(config: &AgentConfig) -> Result<Self, BackendError> {
+    pub fn from_agent_config(config: &AgentConfig) -> Result<Self> {
         let mut backend = match config.backend.as_str() {
             "kiro" => Self::kiro(),
             "kiro-acp" => Self::kiro_acp(),
@@ -89,9 +92,14 @@ impl CliBackend {
             "opencode" => Self::opencode(),
             "pi" => Self::pi(),
             "roo" => Self::roo(),
+            "claude" => Self::claude(),
             "custom" => return Self::custom(config),
-            // Default to claude for "claude" and any unrecognized backend name
-            _ => Self::claude(),
+            other => {
+                return UnknownBackendSnafu {
+                    name: other.to_string(),
+                }
+                .fail()
+            }
         };
 
         // Apply configured extra args for named backends too.
@@ -475,15 +483,14 @@ impl CliBackend {
     ///
     /// # Errors
     /// Returns [`BackendError::CustomBackendRequiresCommand`] if no command is specified.
-    pub fn custom(config: &AgentConfig) -> Result<Self, BackendError> {
+    pub fn custom(config: &AgentConfig) -> Result<Self> {
         let command = config
             .command
             .clone()
             .ok_or(BackendError::CustomBackendRequiresCommand)?;
-        let prompt_mode = if config.prompt_mode == "stdin" {
-            PromptMode::Stdin
-        } else {
-            PromptMode::Arg
+        let prompt_mode = match config.prompt_mode {
+            super::config::ConfigPromptMode::Stdin => PromptMode::Stdin,
+            super::config::ConfigPromptMode::Arg => PromptMode::Arg,
         };
 
         Ok(Self {
@@ -500,7 +507,7 @@ impl CliBackend {
     ///
     /// # Errors
     /// Returns [`BackendError::UnknownBackend`] if the name is not recognized.
-    pub fn from_name(name: &str) -> Result<Self, BackendError> {
+    pub fn from_name(name: &str) -> Result<Self> {
         match name {
             "claude" => Ok(Self::claude()),
             "kiro" => Ok(Self::kiro()),
@@ -526,7 +533,7 @@ impl CliBackend {
     pub fn from_name_with_args(
         name: &str,
         extra_args: &[String],
-    ) -> Result<Self, BackendError> {
+    ) -> Result<Self> {
         let mut backend = Self::from_name(name)?;
         backend.args.extend(extra_args.iter().cloned());
         if backend.command == "codex" {
@@ -542,7 +549,7 @@ impl CliBackend {
     ///
     /// # Errors
     /// Returns [`BackendError::UnknownBackend`] if the backend name is not recognized.
-    pub fn for_interactive_prompt(backend_name: &str) -> Result<Self, BackendError> {
+    pub fn for_interactive_prompt(backend_name: &str) -> Result<Self> {
         match backend_name {
             "claude" => Ok(Self::claude_interactive()),
             "kiro" => Ok(Self::kiro_interactive()),

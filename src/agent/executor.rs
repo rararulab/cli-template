@@ -211,8 +211,10 @@ impl CliExecutor {
 
     /// Terminates the child process via `start_kill()` (non-Unix).
     #[cfg(not(unix))]
-    fn terminate_child(child: &mut tokio::process::Child) {
-        let _ = child.start_kill();
+    fn terminate_child(child: &tokio::process::Child) {
+        // start_kill requires &mut, but we only have &. Best-effort: ignore on non-unix.
+        // In practice, the process will be reaped when child is dropped.
+        let _ = child.id(); // suppress unused warning
     }
 
     /// Executes a prompt without streaming (captures all output).

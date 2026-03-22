@@ -2,6 +2,19 @@
 
 use serde::{Deserialize, Serialize};
 
+/// How to pass prompts to the CLI tool (config-level enum).
+///
+/// Serializes as lowercase strings ("arg" / "stdin") for TOML compatibility.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ConfigPromptMode {
+    /// Pass prompt as a command-line argument.
+    #[default]
+    Arg,
+    /// Write prompt to stdin.
+    Stdin,
+}
+
 /// Agent backend configuration.
 ///
 /// Controls which agent CLI to use and how to invoke it.
@@ -23,7 +36,7 @@ pub struct AgentConfig {
     pub args: Vec<String>,
 
     /// How to pass prompts: "arg" or "stdin".
-    pub prompt_mode: String,
+    pub prompt_mode: ConfigPromptMode,
 
     /// Custom prompt flag for arg mode (e.g., "-p").
     /// If None, uses the backend's default.
@@ -41,7 +54,7 @@ impl Default for AgentConfig {
             backend: "claude".to_string(),
             command: None,
             args: Vec::new(),
-            prompt_mode: "arg".to_string(),
+            prompt_mode: ConfigPromptMode::Arg,
             prompt_flag: None,
             idle_timeout_secs: 30,
         }
