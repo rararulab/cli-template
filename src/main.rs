@@ -2,7 +2,7 @@ use clap::Parser;
 use snafu::ResultExt;
 
 use {{crate_name}}::app_config;
-use {{crate_name}}::cli::{AgentAction, Cli, Command, ConfigAction};
+use {{crate_name}}::cli::{Cli, Command, ConfigAction};
 use {{crate_name}}::error::{self, AgentBackendSnafu, AgentExecutionSnafu, ConfigSnafu, IoSnafu};
 
 #[tokio::main]
@@ -69,45 +69,47 @@ async fn run() -> error::Result<()> {
                 serde_json::json!({"ok": true, "action": "hello", "greeting": greeting})
             );
         }
-        Command::Agent { action } => match action {
-            AgentAction::Run { prompt, backend } => {
-                use {{crate_name}}::agent::{CliBackend, CliExecutor};
+        Command::Agent { prompt, backend } => {
+            use {{crate_name}}::agent::{CliBackend, CliExecutor};
 
-                let cfg = app_config::load();
-                let mut agent_cfg = cfg.agent.clone();
-                if let Some(b) = backend {
-                    agent_cfg.backend = b;
-                }
-
-                let cli_backend =
-                    CliBackend::from_agent_config(&agent_cfg).context(AgentBackendSnafu)?;
-                let executor = CliExecutor::new(cli_backend);
-
-                let timeout = if agent_cfg.idle_timeout_secs > 0 {
-                    Some(std::time::Duration::from_secs(u64::from(
-                        agent_cfg.idle_timeout_secs,
-                    )))
-                } else {
-                    None
-                };
-
-                let result = executor
-                    .execute(&prompt, std::io::stderr(), timeout, false)
-                    .await
-                    .context(AgentExecutionSnafu)?;
-
-                println!(
-                    "{}",
-                    serde_json::json!({
-                        "ok": result.success,
-                        "action": "agent_run",
-                        "exit_code": result.exit_code,
-                        "timed_out": result.timed_out,
-                        "output": result.output,
-                    })
-                );
+            let cfg = app_config::load();
+            let mut agent_cfg = cfg.agent.clone();
+            if let Some(b) = backend {
+                agent_cfg.backend = b;
             }
-        },
+
+            let cli_backend =
+                CliBackend::from_agent_config(&agent_cfg).context(AgentBackendSnafu)?;
+            let executor = CliExecutor::new(cli_backend);
+
+            let timeout = if agent_cfg.idle_timeout_secs > 0 {
+                Some(std::time::Duration::from_secs(u64::from(
+                    agent_cfg.idle_timeout_secs,
+                )))
+            } else {
+                None
+            };
+
+            let result = executor
+                .execute(&prompt, std::io::stderr(), timeout, false)
+                .await
+                .context(AgentExecutionSnafu)?;
+
+            if !result.stderr.is_empty() {
+                eprint!("{}", result.stderr);
+            }
+
+            println!(
+                "{}",
+                serde_json::json!({
+                    "ok": result.success,
+                    "action": "agent_run",
+                    "exit_code": result.exit_code,
+                    "timed_out": result.timed_out,
+                    "output": result.output,
+                })
+            );
+        }
     }
 
     Ok(())
