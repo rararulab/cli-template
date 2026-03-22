@@ -27,6 +27,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Substitute template placeholders
+        run: |
+          find . -type f \( -name '*.rs' -o -name '*.toml' \) \
+            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
@@ -43,6 +48,11 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Substitute template placeholders
+        run: |
+          find . -type f \( -name '*.rs' -o -name '*.toml' \) \
+            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
