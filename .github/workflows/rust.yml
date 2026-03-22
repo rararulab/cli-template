@@ -23,24 +23,30 @@ permissions:
 jobs:
   clippy:
     name: Clippy
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Run clippy
         run: cargo clippy --all-targets --no-deps -- -D warnings
 
   docs:
     name: Documentation
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@nightly
 
       - name: Generate documentation
         run: cargo +nightly doc --no-deps --document-private-items
@@ -49,19 +55,25 @@ jobs:
 
   test:
     name: Test
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           persist-credentials: false
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install nextest
+        uses: taiki-e/install-action@nextest
+
       - name: Run tests
         run: cargo nextest run
 
   rust-success:
     name: Rust Success
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     needs: [clippy, docs, test]
     if: always()
     steps:
