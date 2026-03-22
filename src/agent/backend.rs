@@ -14,6 +14,10 @@ use super::config::AgentConfig;
 /// Module-level result type.
 pub type Result<T> = std::result::Result<T, BackendError>;
 
+/// Prompts longer than this are written to a temp file and the agent is
+/// asked to read from that file instead. This avoids OS `ARG_MAX` limits.
+const LARGE_PROMPT_THRESHOLD: usize = 7000;
+
 /// Output format supported by a CLI backend.
 ///
 /// This allows adapters to declare whether they emit structured JSON
@@ -56,9 +60,30 @@ pub enum PromptMode {
     Stdin,
 }
 
+/// Prepared command ready for execution.
+///
+/// Returned by [`CliBackend::build_command`]. The `_temp_file` handle must
+/// be kept alive for the duration of command execution — dropping it deletes
+/// the underlying file.
+pub struct CommandSpec {
+    /// The command binary to execute.
+    pub command: String,
+    /// Fully resolved argument list (includes prompt).
+    pub args: Vec<String>,
+    /// If set, this string should be written to the child's stdin.
+    pub stdin_input: Option<String>,
+    /// Temp file handle — kept alive so the agent can read from it.
+    _temp_file: Option<NamedTempFile>,
+}
+
 /// A CLI backend configuration for executing prompts.
+///
+/// Factory methods construct backends with the correct flags for each
+/// supported agent CLI. All prompts are passed to CLI processes directly
+/// via [`std::process::Command`] (no shell involved), so there is no
+/// shell injection risk. However, callers should treat this as a local
+/// execution boundary — only pass prompts from trusted, local sources.
 #[derive(Debug, Clone)]
-#[derive(bon::Builder)]
 pub struct CliBackend {
     /// The command to execute.
     pub command: String,
@@ -67,7 +92,6 @@ pub struct CliBackend {
     /// How to pass the prompt.
     pub prompt_mode: PromptMode,
     /// Argument flag for prompt (if `prompt_mode` is `Arg`).
-    #[builder(into)]
     pub prompt_flag: Option<String>,
     /// Output format emitted by this backend.
     pub output_format: OutputFormat,
@@ -78,29 +102,18 @@ pub struct CliBackend {
 impl CliBackend {
     /// Creates a backend from an [`AgentConfig`].
     ///
+    /// Delegates to [`Self::from_name`] for named backends and applies
+    /// config overrides (extra args, command path).
+    ///
     /// # Errors
     /// Returns [`BackendError`] if the backend is "custom" but no command is
     /// specified, or if the backend name is unrecognized.
     pub fn from_agent_config(config: &AgentConfig) -> Result<Self> {
-        let mut backend = match config.backend.as_str() {
-            "kiro" => Self::kiro(),
-            "kiro-acp" => Self::kiro_acp(),
-            "gemini" => Self::gemini(),
-            "codex" => Self::codex(),
-            "amp" => Self::amp(),
-            "copilot" => Self::copilot(),
-            "opencode" => Self::opencode(),
-            "pi" => Self::pi(),
-            "roo" => Self::roo(),
-            "claude" => Self::claude(),
-            "custom" => return Self::custom(config),
-            other => {
-                return UnknownBackendSnafu {
-                    name: other.to_string(),
-                }
-                .fail()
-            }
-        };
+        if config.backend == "custom" {
+            return Self::custom(config);
+        }
+
+        let mut backend = Self::from_name(&config.backend)?;
 
         // Apply configured extra args for named backends too.
         backend.args.extend(config.args.iter().cloned());
@@ -142,8 +155,6 @@ impl CliBackend {
     /// Creates the Claude backend for interactive prompt injection.
     ///
     /// Runs Claude without `-p` flag, passing prompt as a positional argument.
-    /// Uses `=` syntax for `--disallowedTools` to prevent variadic consumption
-    /// of the positional prompt argument.
     pub fn claude_interactive() -> Self {
         Self {
             command: "claude".to_string(),
@@ -367,26 +378,11 @@ impl CliBackend {
         }
     }
 
-    /// Creates the `OpenCode` backend for autonomous mode.
+    /// Creates the `OpenCode` backend for autonomous/headless mode.
     ///
     /// Uses `OpenCode` CLI with `run` subcommand. The prompt is passed as a
     /// positional argument after the subcommand.
     pub fn opencode() -> Self {
-        Self {
-            command: "opencode".to_string(),
-            args: vec!["run".to_string()],
-            prompt_mode: PromptMode::Arg,
-            prompt_flag: None,
-            output_format: OutputFormat::Text,
-            env_vars: vec![],
-        }
-    }
-
-    /// Creates the `OpenCode` TUI backend for interactive mode.
-    ///
-    /// Runs `OpenCode` with `run` subcommand. The prompt is passed as a
-    /// positional argument.
-    pub fn opencode_tui() -> Self {
         Self {
             command: "opencode".to_string(),
             args: vec!["run".to_string()],
@@ -611,13 +607,14 @@ impl CliBackend {
 
     /// Builds the full command with arguments for execution.
     ///
-    /// Returns `(command, args, stdin_input, temp_file)`. The temp file handle
-    /// must be kept alive for the duration of command execution.
-    pub fn build_command(
-        &self,
-        prompt: &str,
-        interactive: bool,
-    ) -> (String, Vec<String>, Option<String>, Option<NamedTempFile>) {
+    /// # Safety assumptions
+    ///
+    /// The prompt is passed directly to the child process via
+    /// [`std::process::Command`] — no shell is involved, so there is no
+    /// shell-injection risk. This function is intended for local, trusted
+    /// prompts only. Do not pass untrusted external input without
+    /// validation.
+    pub fn build_command(&self, prompt: &str, interactive: bool) -> CommandSpec {
         let mut args = self.args.clone();
 
         // Filter args based on execution mode
@@ -629,12 +626,10 @@ impl CliBackend {
         let (stdin_input, temp_file) = match self.prompt_mode {
             PromptMode::Arg => {
                 // Roo headless: always use --prompt-file for all prompts
-                // Only headless roo() has --print in args; roo_interactive() does not
                 if self.command == "roo" && args.contains(&"--print".to_string()) {
                     Self::build_roo_prompt_file(&mut args, prompt)
                 } else {
-                    // Use temp file for large prompts (>7000 chars) to avoid shell ARG_MAX limits
-                    let (prompt_text, temp_file) = if prompt.len() > 7000 {
+                    let (prompt_text, temp_file) = if prompt.len() > LARGE_PROMPT_THRESHOLD {
                         match NamedTempFile::new() {
                             Ok(mut file) => {
                                 if let Err(e) = file.write_all(prompt.as_bytes()) {
@@ -682,7 +677,12 @@ impl CliBackend {
         );
         tracing::trace!(prompt = %prompt, "Full prompt content");
 
-        (self.command.clone(), args, stdin_input, temp_file)
+        CommandSpec {
+            command: self.command.clone(),
+            args,
+            stdin_input,
+            _temp_file: temp_file,
+        }
     }
 
     /// Filters args for interactive mode per spec table.
@@ -712,7 +712,8 @@ impl CliBackend {
     /// Reconciles codex args to resolve conflicting flags.
     ///
     /// Replaces deprecated `--dangerously-bypass-approvals-and-sandbox` with
-    /// `--yolo`, and removes `--full-auto` when `--yolo` is present.
+    /// `--yolo`, removes `--full-auto` when `--yolo` is present, and
+    /// deduplicates `--yolo` entries.
     fn reconcile_codex_args(args: &mut Vec<String>) {
         let had_dangerous_bypass = args
             .iter()
@@ -741,13 +742,6 @@ impl CliBackend {
                 }
                 true
             });
-            if !seen_yolo {
-                if let Some(pos) = args.iter().position(|arg| arg == "exec") {
-                    args.insert(pos + 1, "--yolo".to_string());
-                } else {
-                    args.push("--yolo".to_string());
-                }
-            }
         }
     }
 }

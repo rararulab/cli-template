@@ -16,15 +16,15 @@ use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWriteExt, BufReader};
 use tokio::process::Command;
 use tracing::{debug, warn};
 
-use super::backend::CliBackend;
-#[cfg(test)]
-use super::backend::{OutputFormat, PromptMode};
+use super::backend::{CliBackend, CommandSpec};
 
 /// Result of a CLI execution.
-#[derive(Debug, bon::Builder)]
+#[derive(Debug)]
 pub struct ExecutionResult {
-    /// The full output from the CLI.
+    /// The full stdout output from the CLI.
     pub output: String,
+    /// Captured stderr output (separate from stdout).
+    pub stderr: String,
     /// Whether the execution succeeded (exit code 0).
     pub success: bool,
     /// The exit code.
@@ -39,15 +39,23 @@ pub struct CliExecutor {
     backend: CliBackend,
 }
 
+/// Internal event type for multiplexing stdout and stderr streams.
 enum StreamEvent {
+    /// A line was read from stdout.
     StdoutLine(String),
+    /// A line was read from stderr.
     StderrLine(String),
+    /// stdout reached EOF.
     StdoutEof,
+    /// stderr reached EOF.
     StderrEof,
 }
 
+/// Identifies which stream an event originated from.
 enum StreamKind {
+    /// Standard output.
     Stdout,
+    /// Standard error.
     Stderr,
 }
 
@@ -62,11 +70,10 @@ impl CliExecutor {
     /// Output is streamed line-by-line to the writer while being accumulated
     /// for the return value. If `timeout` is provided and the execution produces
     /// no stdout/stderr activity for longer than that duration, the process
-    /// receives SIGTERM and the result indicates timeout.
+    /// is terminated and the result indicates timeout.
     ///
     /// When `verbose` is true, stderr output is also written to the output writer
     /// with a `[stderr]` prefix. When false, stderr is captured but not displayed.
-    #[allow(clippy::too_many_lines)]
     pub async fn execute<W: Write + Send>(
         &self,
         prompt: &str,
@@ -74,12 +81,35 @@ impl CliExecutor {
         timeout: Option<Duration>,
         verbose: bool,
     ) -> std::io::Result<ExecutionResult> {
-        // Note: _temp_file is kept alive for the duration of this function scope.
-        // For large prompts (>7000 chars), the agent reads from the temp file.
-        let (cmd, args, stdin_input, _temp_file) = self.backend.build_command(prompt, false);
+        let spec = self.backend.build_command(prompt, false);
+        let mut child = self.spawn_child(&spec)?;
 
-        let mut command = Command::new(&cmd);
-        command.args(&args);
+        // Write to stdin if needed, then close to signal EOF
+        if let Some(input) = spec.stdin_input.as_deref()
+            && let Some(mut stdin) = child.stdin.take()
+        {
+            stdin.write_all(input.as_bytes()).await?;
+            drop(stdin);
+        }
+
+        let (accumulated_output, accumulated_stderr, timed_out) =
+            self.read_output(&mut child, &mut output_writer, timeout, verbose).await?;
+
+        let status = child.wait().await?;
+
+        Ok(ExecutionResult {
+            output: accumulated_output,
+            stderr: accumulated_stderr,
+            success: status.success() && !timed_out,
+            exit_code: status.code(),
+            timed_out,
+        })
+    }
+
+    /// Spawns the child process from a [`CommandSpec`].
+    fn spawn_child(&self, spec: &CommandSpec) -> std::io::Result<tokio::process::Child> {
+        let mut command = Command::new(&spec.command);
+        command.args(&spec.args);
         command.stdout(Stdio::piped());
         command.stderr(Stdio::piped());
 
@@ -91,30 +121,29 @@ impl CliExecutor {
         command.envs(self.backend.env_vars.iter().map(|(k, v)| (k, v)));
 
         debug!(
-            command = %cmd,
-            args = ?args,
+            command = %spec.command,
+            args = ?spec.args,
             cwd = ?cwd,
             "Spawning CLI command"
         );
 
-        if stdin_input.is_some() {
+        if spec.stdin_input.is_some() {
             command.stdin(Stdio::piped());
         }
 
-        let mut child = command.spawn()?;
+        command.spawn()
+    }
 
-        // Write to stdin if needed, then close to signal EOF
-        if let Some(input) = stdin_input
-            && let Some(mut stdin) = child.stdin.take()
-        {
-            stdin.write_all(input.as_bytes()).await?;
-            drop(stdin);
-        }
-
-        let mut timed_out = false;
-
-        // Take both stdout and stderr handles upfront to read concurrently.
-        // Each emitted line resets the inactivity timeout.
+    /// Reads stdout and stderr concurrently, applying inactivity timeout.
+    ///
+    /// Returns `(stdout_output, stderr_output, timed_out)`.
+    async fn read_output<W: Write + Send>(
+        &self,
+        child: &mut tokio::process::Child,
+        output_writer: &mut W,
+        timeout: Option<Duration>,
+        verbose: bool,
+    ) -> std::io::Result<(String, String, bool)> {
         let stdout_handle = child.stdout.take();
         let stderr_handle = child.stderr.take();
         let (event_tx, mut event_rx) = tokio::sync::mpsc::channel(256);
@@ -132,6 +161,8 @@ impl CliExecutor {
         let mut stdout_done = stdout_task.is_none();
         let mut stderr_done = stderr_task.is_none();
         let mut accumulated_output = String::new();
+        let mut accumulated_stderr = String::new();
+        let mut timed_out = false;
 
         if let Some(duration) = timeout {
             debug!(
@@ -147,10 +178,10 @@ impl CliExecutor {
                 } else {
                     warn!(
                         timeout_secs = duration.as_secs(),
-                        "Execution inactivity timeout reached, sending SIGTERM"
+                        "Execution inactivity timeout reached, terminating process"
                     );
                     timed_out = true;
-                    Self::terminate_child(&child);
+                    Self::terminate_child(child);
                     break;
                 }
             } else {
@@ -169,9 +200,8 @@ impl CliExecutor {
                         writeln!(output_writer, "[stderr] {line}")?;
                         output_writer.flush()?;
                     }
-                    accumulated_output.push_str("[stderr] ");
-                    accumulated_output.push_str(&line);
-                    accumulated_output.push('\n');
+                    accumulated_stderr.push_str(&line);
+                    accumulated_stderr.push('\n');
                 }
                 Some(StreamEvent::StdoutEof) => stdout_done = true,
                 Some(StreamEvent::StderrEof) => stderr_done = true,
@@ -182,8 +212,6 @@ impl CliExecutor {
             }
         }
 
-        let status = child.wait().await?;
-
         if let Some(handle) = stdout_task {
             handle.await.map_err(join_error_to_io)??;
         }
@@ -191,12 +219,7 @@ impl CliExecutor {
             handle.await.map_err(join_error_to_io)??;
         }
 
-        Ok(ExecutionResult {
-            output: accumulated_output,
-            success: status.success() && !timed_out,
-            exit_code: status.code(),
-            timed_out,
-        })
+        Ok((accumulated_output, accumulated_stderr, timed_out))
     }
 
     /// Terminates the child process gracefully via SIGTERM (Unix).
@@ -212,10 +235,8 @@ impl CliExecutor {
 
     /// Terminates the child process via `start_kill()` (non-Unix).
     #[cfg(not(unix))]
-    fn terminate_child(child: &tokio::process::Child) {
-        // start_kill requires &mut, but we only have &. Best-effort: ignore on non-unix.
-        // In practice, the process will be reaped when child is dropped.
-        let _ = child.id(); // suppress unused warning
+    fn terminate_child(child: &mut tokio::process::Child) {
+        let _ = child.start_kill();
     }
 
     /// Executes a prompt without streaming (captures all output).
@@ -272,7 +293,8 @@ fn join_error_to_io(error: tokio::task::JoinError) -> std::io::Error {
 
 #[cfg(test)]
 mod tests {
-    use super::{CliBackend, CliExecutor, Duration, OutputFormat, PromptMode};
+    use super::{CliExecutor, Duration};
+    use crate::agent::backend::{CliBackend, OutputFormat, PromptMode};
 
     #[tokio::test]
     async fn test_execute_echo() {
@@ -438,5 +460,27 @@ mod tests {
         assert!(!result.timed_out, "Fast command should not time out");
         assert!(result.success);
         assert!(result.output.contains("fast"));
+    }
+
+    #[tokio::test]
+    async fn test_stderr_not_mixed_into_output() {
+        let backend = CliBackend {
+            command: "sh".to_string(),
+            args: vec![
+                "-c".to_string(),
+                "echo stdout_line; echo stderr_line >&2".to_string(),
+            ],
+            prompt_mode: PromptMode::Stdin,
+            prompt_flag: None,
+            output_format: OutputFormat::Text,
+            env_vars: vec![],
+        };
+
+        let executor = CliExecutor::new(backend);
+        let result = executor.execute_capture("").await.unwrap();
+
+        assert!(result.output.contains("stdout_line"));
+        assert!(!result.output.contains("stderr_line"));
+        assert!(result.stderr.contains("stderr_line"));
     }
 }

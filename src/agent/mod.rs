@@ -8,6 +8,6 @@ pub mod backend;
 pub mod config;
 pub mod executor;
 
-pub use backend::{CliBackend, OutputFormat, PromptMode};
+pub use backend::{CliBackend, CommandSpec, OutputFormat, PromptMode};
 pub use config::{AgentConfig, ConfigPromptMode};
 pub use executor::{CliExecutor, ExecutionResult};
