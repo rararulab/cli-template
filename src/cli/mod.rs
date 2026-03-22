@@ -25,6 +25,25 @@ pub enum Command {
         #[command(subcommand)]
         action: ConfigAction,
     },
+
+    /// Run a prompt through the configured agent backend
+    Agent {
+        #[command(subcommand)]
+        action: AgentAction,
+    },
+}
+
+/// Agent management subcommands.
+#[derive(Subcommand)]
+pub enum AgentAction {
+    /// Execute a prompt through the agent CLI
+    Run {
+        /// The prompt to send to the agent
+        prompt: String,
+        /// Override the backend (e.g., "claude", "codex")
+        #[arg(long)]
+        backend: Option<String>,
+    },
 }
 
 /// Config management subcommands.
