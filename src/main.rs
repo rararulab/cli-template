@@ -14,7 +14,7 @@ async fn main() {
         )
         .init();
 
-    if let Err(e) = run().await {
+    if let Err(e) = run() {
         eprintln!("Error: {e}");
         println!(
             "{}",
@@ -24,7 +24,7 @@ async fn main() {
     }
 }
 
-async fn run() -> error::Result<()> {
+fn run() -> error::Result<()> {
     let cli = Cli::parse();
 
     match cli.command {

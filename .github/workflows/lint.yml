@@ -37,6 +37,9 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Format after substitution
+        run: cargo +nightly fmt --all
+
       - name: Check formatting
         run: cargo +nightly fmt --all -- --check
 
