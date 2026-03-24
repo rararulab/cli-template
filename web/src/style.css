@@ -236,6 +236,14 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   color: var(--color-surface);
 }
 
+.install__method-title {
+  text-align: center;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-subtle);
+  margin-bottom: var(--sp-4);
+}
+
 .terminal {
   max-width: 640px;
   margin: 0 auto var(--sp-10);
