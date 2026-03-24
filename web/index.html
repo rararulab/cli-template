@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cli-template — Batteries-Included Rust CLI Template</title>
+    <meta
+      name="description"
+      content="A production-ready Rust CLI template with error handling, config system, CI/CD, and release automation."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="theme-color" content="#fafafa" />
+    <!-- Progressive enhancement: add .js class so CSS can hide elements only when JS is available -->
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__label reveal">Open Source CLI Template</span>
+        <h1 id="hero-heading" class="hero__headline reveal">
+          Ship Rust CLIs<br />Without the Boilerplate
+        </h1>
+        <p class="hero__subtitle reveal">
+          A batteries-included template with structured errors, config management,
+          agent backend, CI/CD pipelines, and automated releases — so you can
+          focus on your logic, not your scaffolding.
+        </p>
+        <a
+          class="btn btn--pop reveal"
+          href="https://github.com/rararulab/cli-template"
+          rel="noopener"
+        >
+          View on GitHub
+        </a>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" aria-labelledby="features-heading">
+      <div class="container">
+        <h2 id="features-heading" class="section-title reveal">Everything You Need</h2>
+        <div class="features__grid">
+          <div class="card reveal">
+            <span class="card__icon">&#x1F50B;</span>
+            <h3 class="card__title">Batteries Included</h3>
+            <p class="card__desc">
+              Clap argument parsing, tokio async runtime, and tracing
+              observability wired up from day one.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card__icon">&#x1F6E1;&#xFE0F;</span>
+            <h3 class="card__title">Snafu Errors</h3>
+            <p class="card__desc">
+              Structured, contextual error handling with snafu — no manual
+              Display or Error impls.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card__icon">&#x1F916;</span>
+            <h3 class="card__title">Agent Backend</h3>
+            <p class="card__desc">
+              Built-in agent execution layer for AI-powered CLI workflows,
+              ready to extend.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card__icon">&#x1F680;</span>
+            <h3 class="card__title">CI/CD Ready</h3>
+            <p class="card__desc">
+              GitHub Actions with lint, test, and release pipelines
+              preconfigured and working out of the box.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card__icon">&#x2699;&#xFE0F;</span>
+            <h3 class="card__title">Config System</h3>
+            <p class="card__desc">
+              Layered configuration with environment overrides, file-based
+              defaults, and runtime merging.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card__icon">&#x1F4E6;</span>
+            <h3 class="card__title">Release Automation</h3>
+            <p class="card__desc">
+              Conventional commits, changelogs, and version bumps handled
+              automatically by release-plz.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install / Quickstart -->
+    <section class="install" aria-labelledby="install-heading">
+      <div class="container">
+        <h2 id="install-heading" class="section-title section-title--light reveal">Get Started</h2>
+        <div class="terminal reveal">
+          <div class="terminal__bar">
+            <span class="terminal__dot"></span>
+            <span class="terminal__dot"></span>
+            <span class="terminal__dot"></span>
+          </div>
+          <pre class="terminal__body" aria-label="Terminal commands to get started"><code><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
+<span class="terminal__prompt">$</span> cd my-awesome-cli
+<span class="terminal__prompt">$</span> cargo run -- --help</code></pre>
+        </div>
+        <ol class="steps reveal">
+          <li>Generate your project from the template</li>
+          <li>Replace placeholder names in <code>Cargo.toml</code> and <code>CLAUDE.md</code></li>
+          <li>Start building your CLI commands</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p class="footer__copy">&copy; 2026 RararuLab</p>
+        <a
+          class="footer__link"
+          href="https://github.com/rararulab/cli-template"
+          rel="noopener"
+        >
+          GitHub
+        </a>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

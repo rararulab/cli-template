@@ -1,0 +1,14 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['web/**']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: rararulab/workflows/.github/workflows/deploy-pages.yml@main
+    with:
+      build-command: "cd web && npm ci && npm run build"
+      output-dir: "web/dist"
