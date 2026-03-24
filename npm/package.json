@@ -1,0 +1,21 @@
+{
+  "name": "@{{github-org}}/{{project-name}}",
+  "version": "0.0.0",
+  "description": "{{project-name}} — install via npx",
+  "bin": {
+    "{{project-name}}": "bin/cli.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/{{github-org}}/{{project-name}}"
+  },
+  "license": "MIT",
+  "os": ["darwin", "linux"],
+  "cpu": ["x64", "arm64"],
+  "engines": {
+    "node": ">=18"
+  }
+}
