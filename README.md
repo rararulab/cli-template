@@ -23,9 +23,23 @@ Opinionated Rust CLI template with batteries included.
 - **Pre-commit**: `prek` hooks for format, lint, doc, and commit message validation
 - **CI/CD**: GitHub Actions (lint → rust → release PR)
 
-## Quick Start
+## Installation
 
-1. Use this template to create a new repo
+### Via npx (recommended, no Rust required)
+
+```bash
+npx @<your-org>/<your-project> --help
+```
+
+### Via cargo
+
+```bash
+cargo install --path .
+```
+
+### From template
+
+1. `cargo generate rararulab/cli-template`
 2. Find and replace `{{project-name}}` with your project name
 3. Update `CLAUDE.md` with your project description
 4. Run `just setup-hooks` to install pre-commit hooks
@@ -106,6 +120,13 @@ Includes:
 - `/dev` skill with subagent prompts for implementation, code review, and design review
 - Development guides: workflow, commit style, Rust style, code comments, anti-patterns
 
+### Setup Skill
+
+The `/setup` skill in `.claude/skills/setup/` teaches Claude Code how to initialize and configure a project created from this template. It covers:
+- Project creation via `cargo generate`
+- Post-setup configuration checklist
+- Development commands and conventions
+
 ## Project Structure
 
 ```
@@ -126,11 +147,19 @@ src/
 
 .claude/
 └── skills/
-    └── dev/        # /dev autonomous development pipeline
-        ├── SKILL.md
-        └── references/
-            ├── templates.md
-            └── subagent-prompts.md
+    ├── dev/        # /dev autonomous development pipeline
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── templates.md
+    │       └── subagent-prompts.md
+    └── setup/      # /setup project initialization guide
+        └── SKILL.md
+
+npm/                # npx install package
+├── package.json
+├── bin/cli.js      # Binary wrapper
+└── scripts/
+    └── postinstall.js  # Platform binary downloader
 
 docs/guides/        # Development conventions
 ├── workflow.md     # Issue → worktree → PR → merge
