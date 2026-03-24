@@ -14,16 +14,17 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Nunito:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <meta name="theme-color" content="#fafafa" />
     <!-- Progressive enhancement: add .js class so CSS can hide elements only when JS is available -->
     <script>document.documentElement.classList.add("js");</script>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
         <span class="hero__label reveal">Open Source CLI Template</span>
-        <h1 class="hero__headline reveal">
+        <h1 id="hero-heading" class="hero__headline reveal">
           Ship Rust CLIs<br />Without the Boilerplate
         </h1>
         <p class="hero__subtitle reveal">
@@ -34,6 +35,7 @@
         <a
           class="btn btn--pop reveal"
           href="https://github.com/rararulab/cli-template"
+          rel="noopener"
         >
           View on GitHub
         </a>
@@ -41,9 +43,9 @@
     </section>
 
     <!-- Features -->
-    <section class="features">
+    <section class="features" aria-labelledby="features-heading">
       <div class="container">
-        <h2 class="section-title reveal">Everything You Need</h2>
+        <h2 id="features-heading" class="section-title reveal">Everything You Need</h2>
         <div class="features__grid">
           <div class="card reveal">
             <span class="card__icon">&#x1F50B;</span>
@@ -98,16 +100,16 @@
     </section>
 
     <!-- Install / Quickstart -->
-    <section class="install">
+    <section class="install" aria-labelledby="install-heading">
       <div class="container">
-        <h2 class="section-title section-title--light reveal">Get Started</h2>
+        <h2 id="install-heading" class="section-title section-title--light reveal">Get Started</h2>
         <div class="terminal reveal">
           <div class="terminal__bar">
             <span class="terminal__dot"></span>
             <span class="terminal__dot"></span>
             <span class="terminal__dot"></span>
           </div>
-          <pre class="terminal__body"><code><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
+          <pre class="terminal__body" aria-label="Terminal commands to get started"><code><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
 <span class="terminal__prompt">$</span> cd my-awesome-cli
 <span class="terminal__prompt">$</span> cargo run -- --help</code></pre>
         </div>
@@ -126,6 +128,7 @@
         <a
           class="footer__link"
           href="https://github.com/rararulab/cli-template"
+          rel="noopener"
         >
           GitHub
         </a>

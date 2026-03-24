@@ -10,6 +10,8 @@
   --color-pop: #e8788a;
   --color-pop-hover: #d4606f;
   --color-ok: #7bc4a0;
+  --color-ink-deep: #1a1214;
+  --color-ink-mid: #261c1e;
 
   /* Typography */
   --font-sans: "Nunito", system-ui, sans-serif;
@@ -239,7 +241,7 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   margin: 0 auto var(--sp-10);
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #1a1214;
+  background: var(--color-ink-deep);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -247,7 +249,7 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   display: flex;
   gap: var(--sp-2);
   padding: var(--sp-3) var(--sp-4);
-  background: #261c1e;
+  background: var(--color-ink-mid);
 }
 
 .terminal__dot {
@@ -314,6 +316,32 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
 
 .footer__link:hover {
   color: var(--color-pop);
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .card,
+  .btn,
+  .footer__link {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ===== Focus ===== */
+.btn:focus-visible,
+.footer__link:focus-visible {
+  outline: 2px solid var(--color-pop);
+  outline-offset: 2px;
 }
 
 /* ===== Responsive ===== */
