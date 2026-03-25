@@ -277,6 +277,13 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   color: var(--color-subtle);
 }
 
+.terminal__body code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
 .terminal__prompt {
   color: var(--color-pop);
   user-select: none;
