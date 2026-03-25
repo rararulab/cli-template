@@ -22,3 +22,9 @@ All changes — no matter how small — follow the issue → worktree → PR →
 ## Guardrails
 
 @docs/guides/anti-patterns.md
+
+## Agent Quickstart
+
+How to initialize a project from this template and add features to it.
+
+@docs/guides/agent-quickstart.md
