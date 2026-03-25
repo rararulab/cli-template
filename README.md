@@ -120,13 +120,6 @@ Includes:
 - `/dev` skill with subagent prompts for implementation, code review, and design review
 - Development guides: workflow, commit style, Rust style, code comments, anti-patterns
 
-### Setup Skill
-
-The `/setup` skill in `.claude/skills/setup/` teaches Claude Code how to initialize and configure a project created from this template. It covers:
-- Project creation via `cargo generate`
-- Post-setup configuration checklist
-- Development commands and conventions
-
 ## Project Structure
 
 ```
@@ -147,13 +140,11 @@ src/
 
 .claude/
 └── skills/
-    ├── dev/        # /dev autonomous development pipeline
-    │   ├── SKILL.md
-    │   └── references/
-    │       ├── templates.md
-    │       └── subagent-prompts.md
-    └── setup/      # /setup project initialization guide
-        └── SKILL.md
+    └── dev/        # /dev autonomous development pipeline
+        ├── SKILL.md
+        └── references/
+            ├── templates.md
+            └── subagent-prompts.md
 
 npm/                # npx install package (optionalDependencies pattern)
 ├── package.json    # Main package with platform optionalDependencies

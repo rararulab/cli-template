@@ -52,12 +52,13 @@ jobs:
         with:
           path: artifacts
 
+      # Note: This workflow only runs in projects generated via cargo generate,
+      # where all {{project-name}}/{{github-org}} placeholders are already replaced.
+      # The sed below handles npm/ files that may still contain placeholders during CI.
       - name: Substitute template placeholders
         run: |
           find npm/ -type f \( -name '*.json' -o -name '*.js' -o -name '*.md' \) \
             -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g; s/{{crate_name}}/ci_test_app/g' {} +
-          find .github/workflows/ -name 'publish-npm.yml' \
-            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g' {} +
 
       # Publish platform packages first (main package depends on them)
       - name: Publish platform packages
