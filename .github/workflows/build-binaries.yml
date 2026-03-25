@@ -39,7 +39,7 @@ jobs:
 
       - name: Substitute template placeholders
         run: |
-          find . -type f \( -name '*.rs' -o -name '*.toml' \) \
+          find . -type f \( -name '*.rs' -o -name '*.toml' -o -name '*.yml' -o -name '*.yaml' \) \
             -exec sed -i'' -e 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
 
       - name: Setup Rust
@@ -59,8 +59,8 @@ jobs:
 
       - name: Package binary
         run: |
-          BINARY_NAME="ci-test-app"
-          ARTIFACT="ci-test-app-v${{ inputs.version }}-${{ matrix.target }}"
+          BINARY_NAME="{{project-name}}"
+          ARTIFACT="{{project-name}}-v${{ inputs.version }}-${{ matrix.target }}"
           mkdir -p staging
           cp "target/${{ matrix.target }}/release/${BINARY_NAME}" staging/
           cd staging

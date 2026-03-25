@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/{{github-org}}/{{project-name}}"
   },
+  "type": "module",
   "license": "MIT",
   "os": ["darwin", "linux"],
   "cpu": ["x64", "arm64"],

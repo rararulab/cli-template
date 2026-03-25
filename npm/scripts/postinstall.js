@@ -3,18 +3,23 @@
 // Downloads the correct platform-specific binary from GitHub releases.
 // Falls back gracefully with instructions if download fails.
 
-import { chmodSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
+import { readFileSync, chmodSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
+
+// Validate version format to prevent injection via malformed package.json
+const SEMVER_RE = /^\d+\.\d+\.\d+(?:-[\w.]+)?$/;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
-  await import("node:fs").then((fs) =>
-    fs.promises.readFile(join(__dirname, "..", "package.json"), "utf8")
-  )
+  readFileSync(join(__dirname, "..", "package.json"), "utf8")
 );
 const VERSION = pkg.version;
+if (!SEMVER_RE.test(VERSION)) {
+  console.error(`[{{project-name}}] Invalid version format: ${VERSION}`);
+  process.exit(1);
+}
 const NAME = "{{project-name}}";
 const ORG = "{{github-org}}";
 
@@ -55,11 +60,11 @@ try {
 
   const tmpFile = join(binDir, `${NAME}.tar.gz`);
 
-  // Download using curl (available on all supported platforms)
-  execSync(`curl -fsSL "${url}" -o "${tmpFile}"`, { stdio: "pipe" });
+  // Download using curl — execFileSync avoids shell injection
+  execFileSync("curl", ["-fsSL", url, "-o", tmpFile], { stdio: "pipe" });
 
   // Extract
-  execSync(`tar -xzf "${tmpFile}" -C "${binDir}"`, { stdio: "pipe" });
+  execFileSync("tar", ["-xzf", tmpFile, "-C", binDir], { stdio: "pipe" });
 
   // Clean up archive
   unlinkSync(tmpFile);

@@ -9,7 +9,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const binName = process.platform === "win32" ? "{{project-name}}.exe" : "{{project-name}}";
+const binName = "{{project-name}}";
 const binPath = join(__dirname, binName);
 
 if (!existsSync(binPath)) {
