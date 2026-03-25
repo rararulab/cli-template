@@ -1,0 +1,131 @@
+name: Publish npm
+
+on:
+  release:
+    types: [published]
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Binaries
+    uses: ./.github/workflows/build-binaries.yml
+    with:
+      version: ${{ github.event.release.tag_name }}
+
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid semver: ${VERSION}"
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # Note: This workflow only runs in projects generated via cargo generate,
+      # where all {{project-name}}/{{github-org}} placeholders are already replaced.
+      # The sed below handles npm/ files that may still contain placeholders during CI.
+      - name: Substitute template placeholders
+        run: |
+          find npm/ -type f \( -name '*.json' -o -name '*.js' -o -name '*.md' \) \
+            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g; s/{{crate_name}}/ci_test_app/g' {} +
+
+      # Publish platform packages first (main package depends on them)
+      - name: Publish platform packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PLATFORMS=("darwin-arm64:darwin:arm64" "darwin-x64:darwin:x64" "linux-arm64:linux:arm64" "linux-x64:linux:x64")
+
+          for entry in "${PLATFORMS[@]}"; do
+            IFS=: read -r platform os cpu <<< "$entry"
+            PKG_DIR="$(mktemp -d)"
+            PKG_NAME="@{{github-org}}/{{project-name}}-${platform}"
+
+            # Create platform package.json
+            cat > "${PKG_DIR}/package.json" << PKGJSON
+          {
+            "name": "${PKG_NAME}",
+            "version": "${VERSION}",
+            "description": "{{project-name}} binary for ${platform}",
+            "license": "MIT",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/{{github-org}}/{{project-name}}"
+            },
+            "os": ["${os}"],
+            "cpu": ["${cpu}"],
+            "preferUnplugged": true
+          }
+          PKGJSON
+
+            # Copy binary into package
+            cp "artifacts/${platform}/{{project-name}}" "${PKG_DIR}/{{project-name}}"
+            chmod +x "${PKG_DIR}/{{project-name}}"
+
+            echo "Publishing ${PKG_NAME}@${VERSION}..."
+            cd "${PKG_DIR}" && npm publish --access public
+            cd -
+          done
+
+      # Publish main package (references platform packages via optionalDependencies)
+      - name: Publish main package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd npm
+
+          # Set version and lock optionalDependencies to exact version
+          npm version "${VERSION}" --no-git-tag-version
+          node --input-type=module -e "
+            import {readFileSync, writeFileSync} from 'node:fs';
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+            for (const dep of Object.keys(pkg.optionalDependencies || {})) {
+              pkg.optionalDependencies[dep] = '${VERSION}';
+            }
+            writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+          echo "Publishing @{{github-org}}/{{project-name}}@${VERSION}..."
+          npm publish --access public
+
+      - name: Attach binaries to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for platform in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
+            tar -czf "{{project-name}}-${platform}.tar.gz" -C "artifacts/${platform}" {{project-name}}
+          done
+          gh release upload "${{ github.event.release.tag_name }}" *.tar.gz --clobber

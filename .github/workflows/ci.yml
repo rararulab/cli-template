@@ -27,3 +27,42 @@ jobs:
     name: Rust
     uses: ./.github/workflows/rust.yml
 
+  npm-validate:
+    name: Validate npm Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Substitute template placeholders
+        run: |
+          find npm/ -type f \( -name '*.json' -o -name '*.js' -o -name '*.md' \) \
+            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g; s/{{crate_name}}/ci_test_app/g' {} +
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate package structure
+        run: |
+          cd npm
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+            const checks = [
+              [pkg.bin, 'missing bin entry'],
+              [pkg.optionalDependencies, 'missing optionalDependencies'],
+              [Object.keys(pkg.optionalDependencies || {}).length === 4, 'expected 4 platform packages'],
+            ];
+            for (const [ok, msg] of checks) { if (!ok) throw new Error(msg); }
+            console.log('Package:', pkg.name, '| platforms:', Object.keys(pkg.optionalDependencies).join(', '));
+          "
+
+      - name: Check npm pack (dry run)
+        run: |
+          cd npm
+          npm pack --dry-run
+

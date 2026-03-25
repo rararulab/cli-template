@@ -23,9 +23,23 @@ Opinionated Rust CLI template with batteries included.
 - **Pre-commit**: `prek` hooks for format, lint, doc, and commit message validation
 - **CI/CD**: GitHub Actions (lint → rust → release PR)
 
-## Quick Start
+## Installation
 
-1. Use this template to create a new repo
+### Via npx (recommended, no Rust required)
+
+```bash
+npx @<your-org>/<your-project> --help
+```
+
+### Via cargo
+
+```bash
+cargo install --path .
+```
+
+### From template
+
+1. `cargo generate rararulab/cli-template`
 2. Find and replace `{{project-name}}` with your project name
 3. Update `CLAUDE.md` with your project description
 4. Run `just setup-hooks` to install pre-commit hooks
@@ -131,6 +145,10 @@ src/
         └── references/
             ├── templates.md
             └── subagent-prompts.md
+
+npm/                # npx install package (optionalDependencies pattern)
+├── package.json    # Main package with platform optionalDependencies
+└── bin/cli.js      # Platform binary resolver + launcher
 
 docs/guides/        # Development conventions
 ├── workflow.md     # Issue → worktree → PR → merge

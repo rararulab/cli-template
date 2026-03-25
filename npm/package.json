@@ -1,0 +1,23 @@
+{
+  "name": "@{{github-org}}/{{project-name}}",
+  "version": "0.0.0",
+  "description": "{{project-name}} CLI",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/{{github-org}}/{{project-name}}"
+  },
+  "bin": {
+    "{{project-name}}": "bin/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@{{github-org}}/{{project-name}}-darwin-arm64": "0.0.0",
+    "@{{github-org}}/{{project-name}}-darwin-x64": "0.0.0",
+    "@{{github-org}}/{{project-name}}-linux-arm64": "0.0.0",
+    "@{{github-org}}/{{project-name}}-linux-x64": "0.0.0"
+  }
+}
