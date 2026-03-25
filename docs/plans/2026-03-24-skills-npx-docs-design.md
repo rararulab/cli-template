@@ -21,12 +21,13 @@ Add three capabilities to cli-template:
 
 ### npm Package (`npm/`)
 
-- `package.json` with `bin` entry pointing to a thin JS wrapper
-- `bin/cli.js` — delegates to the platform-specific binary
-- `scripts/postinstall.js` — downloads the correct binary from GitHub Releases
-  based on `process.platform` and `process.arch`
+- **Updated**: switched from postinstall download to optionalDependencies
+  platform packages (Biome/Turbo pattern). Zero postinstall scripts.
+- `package.json` with `bin` entry + `optionalDependencies` per platform
+- `bin/cli.js` — resolves platform package via `require.resolve`, spawns binary
+- Platform packages (`@org/cli-darwin-arm64`, etc.) published by CI
 - Supports: macOS (x64, arm64), Linux (x64, arm64)
-- Graceful fallback: warns on unsupported platforms, does not fail install
+- npm automatically installs only the matching platform package via os/cpu fields
 
 ### CI Workflows
 

@@ -155,11 +155,9 @@ src/
     └── setup/      # /setup project initialization guide
         └── SKILL.md
 
-npm/                # npx install package
-├── package.json
-├── bin/cli.js      # Binary wrapper
-└── scripts/
-    └── postinstall.js  # Platform binary downloader
+npm/                # npx install package (optionalDependencies pattern)
+├── package.json    # Main package with platform optionalDependencies
+└── bin/cli.js      # Platform binary resolver + launcher
 
 docs/guides/        # Development conventions
 ├── workflow.md     # Issue → worktree → PR → merge

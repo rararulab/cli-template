@@ -43,8 +43,13 @@ jobs:
 
       - name: Substitute template placeholders
         run: |
-          find . -type f \( -name '*.rs' -o -name '*.toml' \) \
-            -exec sed -i'' -e 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
+          if [[ "$OSTYPE" == darwin* ]]; then
+            find . -type f \( -name '*.rs' -o -name '*.toml' \) \
+              -exec sed -i '' 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
+          else
+            find . -type f \( -name '*.rs' -o -name '*.toml' \) \
+              -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
+          fi
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -65,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}
-          path: target/${{ matrix.target }}/release/ci-test-app
+          path: target/${{ matrix.target }}/release/{{project-name}}
           retention-days: 1

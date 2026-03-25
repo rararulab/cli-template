@@ -40,7 +40,12 @@ jobs:
         id: version
         run: |
           VERSION="${{ github.event.release.tag_name }}"
-          echo "version=${VERSION#v}" >> "$GITHUB_OUTPUT"
+          VERSION="${VERSION#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid semver: ${VERSION}"
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -51,6 +56,8 @@ jobs:
         run: |
           find npm/ -type f \( -name '*.json' -o -name '*.js' -o -name '*.md' \) \
             -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g; s/{{crate_name}}/ci_test_app/g' {} +
+          find .github/workflows/ -name 'publish-npm.yml' \
+            -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g' {} +
 
       # Publish platform packages first (main package depends on them)
       - name: Publish platform packages
@@ -63,18 +70,18 @@ jobs:
           for entry in "${PLATFORMS[@]}"; do
             IFS=: read -r platform os cpu <<< "$entry"
             PKG_DIR="$(mktemp -d)"
-            PKG_NAME="@rararulab/ci-test-app-${platform}"
+            PKG_NAME="@{{github-org}}/{{project-name}}-${platform}"
 
             # Create platform package.json
             cat > "${PKG_DIR}/package.json" << PKGJSON
           {
             "name": "${PKG_NAME}",
             "version": "${VERSION}",
-            "description": "ci-test-app binary for ${platform}",
+            "description": "{{project-name}} binary for ${platform}",
             "license": "MIT",
             "repository": {
               "type": "git",
-              "url": "https://github.com/rararulab/ci-test-app"
+              "url": "https://github.com/{{github-org}}/{{project-name}}"
             },
             "os": ["${os}"],
             "cpu": ["${cpu}"],
@@ -83,8 +90,8 @@ jobs:
           PKGJSON
 
             # Copy binary into package
-            cp "artifacts/${platform}/ci-test-app" "${PKG_DIR}/ci-test-app"
-            chmod +x "${PKG_DIR}/ci-test-app"
+            cp "artifacts/${platform}/{{project-name}}" "${PKG_DIR}/{{project-name}}"
+            chmod +x "${PKG_DIR}/{{project-name}}"
 
             echo "Publishing ${PKG_NAME}@${VERSION}..."
             cd "${PKG_DIR}" && npm publish --access public
@@ -101,16 +108,16 @@ jobs:
 
           # Set version and lock optionalDependencies to exact version
           npm version "${VERSION}" --no-git-tag-version
-          node -e "
+          node --input-type=module -e "
             import {readFileSync, writeFileSync} from 'node:fs';
             const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
             for (const dep of Object.keys(pkg.optionalDependencies || {})) {
               pkg.optionalDependencies[dep] = '${VERSION}';
             }
             writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          " --input-type=module
+          "
 
-          echo "Publishing @rararulab/ci-test-app@${VERSION}..."
+          echo "Publishing @{{github-org}}/{{project-name}}@${VERSION}..."
           npm publish --access public
 
       - name: Attach binaries to GitHub release
@@ -118,6 +125,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for platform in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
-            tar -czf "ci-test-app-${platform}.tar.gz" -C "artifacts/${platform}" ci-test-app
+            tar -czf "{{project-name}}-${platform}.tar.gz" -C "artifacts/${platform}" {{project-name}}
           done
           gh release upload "${{ github.event.release.tag_name }}" *.tar.gz --clobber
