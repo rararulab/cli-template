@@ -25,9 +25,9 @@ The template uses **3 placeholder variables** throughout the codebase:
 
 | Placeholder | Format | Example | Where Used |
 |-------------|--------|---------|------------|
-| `{{project-name}}` | kebab-case | `my-awesome-cli` | Cargo.toml, CLI name, paths, npm, CI, docs |
-| `{{crate_name}}` | snake_case | `my_awesome_cli` | Rust `use` statements, test binary name |
-| `{{github-org}}` | GitHub org/user | `myorg` | Repository URLs, npm scope |
+| `{{project-name}}` | kebab-case | `my-awesome-cli` | Cargo.toml, CLI name, paths.rs, npm/, CI workflows, justfile, cliff.toml, .gitignore, docs |
+| `{{crate_name}}` | snake_case | `my_awesome_cli` | Rust `use` statements, tests, CI workflows (sed replacements) |
+| `{{github-org}}` | GitHub org/user | `myorg` | Repository URLs, npm scope, CI workflows |
 
 > **Rule**: `{{crate_name}}` is always `{{project-name}}` with hyphens replaced by underscores.
 
@@ -63,6 +63,7 @@ After replacing placeholders, customize these files:
 | `CLAUDE.md` | Replace the `TODO:` line in Project Identity with your project description |
 | `README.md` | Rewrite the project description and usage examples |
 | `src/cli/mod.rs` | Update the `/// Your CLI application` doc comment |
+| `src/paths.rs` | Verify the data directory name (`.{project-name}`) is correct |
 | `src/app_config.rs` | Replace `ExampleConfig` with your own config sections |
 | `src/main.rs` | Replace the `Hello` command dispatch with your own commands |
 | `cliff.toml` | Verify the `repo` field matches your GitHub repo name |
@@ -354,7 +355,7 @@ Download { source: crate::download::client::DownloadError },
 ```rust
 Command::Download { url, output } => {
     let dest = output.unwrap_or_else(|| std::path::PathBuf::from("."));
-    let bytes = your_crate::download::download_file(&url, &dest)
+    let bytes = {{crate_name}}::download::download_file(&url, &dest)
         .await
         .context(DownloadSnafu)?;
     eprintln!("Downloaded {bytes} bytes to {}", dest.display());

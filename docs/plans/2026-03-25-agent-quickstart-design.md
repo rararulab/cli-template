@@ -1,7 +1,7 @@
 # Design: Agent Quickstart Guide
 
 **Date**: 2026-03-25
-**Issue**: TBD
+**Issue**: #17
 
 ## Goal
 
