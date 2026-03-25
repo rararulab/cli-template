@@ -60,7 +60,9 @@ jobs:
       - name: Package binary
         run: |
           BINARY_NAME="{{project-name}}"
-          ARTIFACT="{{project-name}}-v${{ inputs.version }}-${{ matrix.target }}"
+          VERSION="${{ inputs.version }}"
+          VERSION="${VERSION#v}"
+          ARTIFACT="{{project-name}}-v${VERSION}-${{ matrix.target }}"
           mkdir -p staging
           cp "target/${{ matrix.target }}/release/${BINARY_NAME}" staging/
           cd staging
