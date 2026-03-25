@@ -1,71 +1,77 @@
 ---
 name: setup
-description: Use when setting up, installing, or initializing a project created from cli-template. Keywords: install, setup, getting started, new project, cargo generate, npx.
+description: "Install, set up, and configure a Rust CLI built from cli-template. Use when user says: 'install this CLI', 'set up the project', 'getting started', 'how to use', 'cargo generate', 'npx install', 'configure', 'post-setup', 'initialize project', 'new project from template', 'what commands are available', 'how do I run this'. Actions: install, setup, init, configure, generate, build, run. Objects: CLI, binary, template, project, config, npx, cargo."
 ---
 
-# Project Setup Guide
+IRON LAW: NEVER skip the post-setup checklist. An unconfigured project will fail CI and confuse contributors.
 
-## Creating a New Project
+# Setup & Installation
 
+## Installation Methods
+
+Pick ONE based on the user's environment:
+
+### npx (no Rust required)
+```bash
+npx @<org>/<project-name> --help
+```
+
+### cargo install (from source)
+```bash
+cargo install --path .
+```
+
+### From template (new project)
 ```bash
 cargo generate rararulab/cli-template
 cd <your-project-name>
 ```
 
-After generation, the `{{project-name}}` and `{{crate_name}}` placeholders are replaced with your project name.
+After generation, `{{project-name}}` and `{{crate_name}}` placeholders are replaced automatically.
 
-## Installing Pre-built Binary
+## Post-Setup Workflow ⚠️ REQUIRED
 
-### Via npx (no Rust required)
-```bash
-npx @<org>/<project-name> --help
+Run through every item. Do NOT skip any step.
+
+```
+- [ ] 1. Update CLAUDE.md — fill in "Project Identity" section with what the CLI does
+- [ ] 2. Update Cargo.toml — fill in `description` field
+- [ ] 3. Install pre-commit hooks: `just setup-hooks`
+- [ ] 4. Verify everything works: `just pre-commit`
+- [ ] 5. Push to GitHub and confirm CI passes
 ```
 
-### Via cargo
+Ask: "Did CI pass? If not, what failed?" — fix before proceeding.
+
+## Usage
+
+### CLI commands
 ```bash
-cargo install --path .
+<project-name> --help              # Show all commands
+<project-name> agent "prompt"      # Run AI agent backend
+<project-name> config set key val  # Update config
 ```
 
-## Post-Setup Checklist
-
-1. Update `CLAUDE.md` — fill in the "Project Identity" section
-2. Update `Cargo.toml` — fill in `description`
-3. Run `just setup-hooks` to install pre-commit hooks
-4. Run `just pre-commit` to verify everything works
-5. Push to GitHub and verify CI passes
-
-## Development Commands
-
+### Development commands
 ```bash
 just fmt          # Format code
 just clippy       # Run clippy
 just test         # Run tests
-just lint         # Full lint suite
-just pre-commit   # All pre-commit checks
+just pre-commit   # All checks (format + lint + test)
 just build        # Build debug binary
 ```
 
-## Project Conventions
+### Configuration
 
-- **Errors**: Use `snafu` — never `thiserror` or manual impls
-- **Builders**: Use `bon::Builder` for structs with 3+ fields
-- **Workflow**: All changes go through issue → worktree → PR → merge
-- **Commits**: Conventional commits format: `type(scope): description (#N)`
-- **Comments**: All code comments in English
+Config file: `~/.<project-name>/config.toml`
 
-## Key Directories
+Override via CLI: `<project-name> config set <key> <value>`
 
-- `src/` — Rust source code
-- `docs/guides/` — Development conventions
-- `.claude/skills/dev/` — `/dev` autonomous development pipeline
-- `web/` — GitHub Pages landing site
-- `npm/` — npx install package (downloads pre-built binary)
+For conventions (error handling, commit style, workflow), read CLAUDE.md — do NOT duplicate here.
 
-## Configuration
+## Anti-Patterns
 
-Config file location: `~/.<project-name>/config.toml`
-
-```toml
-[agent]
-backend = "claude"
-```
+- Do NOT start coding before completing the post-setup checklist
+- Do NOT hardcode the project name — use the config system or CLI args
+- Do NOT skip `just pre-commit` before first push — template defaults may need adjustment
+- Do NOT duplicate CLAUDE.md conventions in this skill — reference the guides instead
