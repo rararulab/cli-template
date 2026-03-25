@@ -46,10 +46,20 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Validate package.json
+      - name: Validate package structure
         run: |
           cd npm
-          node -e "import{readFileSync as r}from'node:fs';const p=JSON.parse(r('package.json','utf8'));console.log('Package:',p.name,p.version);if(!p.bin)throw new Error('Missing bin entry');" --input-type=module
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+            const checks = [
+              [pkg.bin, 'missing bin entry'],
+              [pkg.optionalDependencies, 'missing optionalDependencies'],
+              [Object.keys(pkg.optionalDependencies || {}).length === 4, 'expected 4 platform packages'],
+            ];
+            for (const [ok, msg] of checks) { if (!ok) throw new Error(msg); }
+            console.log('Package:', pkg.name, '| platforms:', Object.keys(pkg.optionalDependencies).join(', '));
+          "
 
       - name: Check npm pack (dry run)
         run: |

@@ -30,40 +30,94 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release-artifacts
-          merge-multiple: true
-
-      - name: Attach binaries to GitHub release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
-            release-artifacts/*.tar.gz --clobber
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Substitute template placeholders in npm package
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          echo "version=${VERSION#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Substitute template placeholders
         run: |
           find npm/ -type f \( -name '*.json' -o -name '*.js' -o -name '*.md' \) \
             -exec sed -i 's/{{project-name}}/ci-test-app/g; s/{{github-org}}/rararulab/g; s/{{crate_name}}/ci_test_app/g' {} +
 
-      - name: Set npm package version
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-          cd npm
-          npm version "${VERSION}" --no-git-tag-version
-
-      - name: Publish to npm
-        run: |
-          cd npm
-          npm publish --access public
+      # Publish platform packages first (main package depends on them)
+      - name: Publish platform packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PLATFORMS=("darwin-arm64:darwin:arm64" "darwin-x64:darwin:x64" "linux-arm64:linux:arm64" "linux-x64:linux:x64")
+
+          for entry in "${PLATFORMS[@]}"; do
+            IFS=: read -r platform os cpu <<< "$entry"
+            PKG_DIR="$(mktemp -d)"
+            PKG_NAME="@rararulab/ci-test-app-${platform}"
+
+            # Create platform package.json
+            cat > "${PKG_DIR}/package.json" << PKGJSON
+          {
+            "name": "${PKG_NAME}",
+            "version": "${VERSION}",
+            "description": "ci-test-app binary for ${platform}",
+            "license": "MIT",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/rararulab/ci-test-app"
+            },
+            "os": ["${os}"],
+            "cpu": ["${cpu}"],
+            "preferUnplugged": true
+          }
+          PKGJSON
+
+            # Copy binary into package
+            cp "artifacts/${platform}/ci-test-app" "${PKG_DIR}/ci-test-app"
+            chmod +x "${PKG_DIR}/ci-test-app"
+
+            echo "Publishing ${PKG_NAME}@${VERSION}..."
+            cd "${PKG_DIR}" && npm publish --access public
+            cd -
+          done
+
+      # Publish main package (references platform packages via optionalDependencies)
+      - name: Publish main package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd npm
+
+          # Set version and lock optionalDependencies to exact version
+          npm version "${VERSION}" --no-git-tag-version
+          node -e "
+            import {readFileSync, writeFileSync} from 'node:fs';
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+            for (const dep of Object.keys(pkg.optionalDependencies || {})) {
+              pkg.optionalDependencies[dep] = '${VERSION}';
+            }
+            writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          " --input-type=module
+
+          echo "Publishing @rararulab/ci-test-app@${VERSION}..."
+          npm publish --access public
+
+      - name: Attach binaries to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for platform in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
+            tar -czf "ci-test-app-${platform}.tar.gz" -C "artifacts/${platform}" ci-test-app
+          done
+          gh release upload "${{ github.event.release.tag_name }}" *.tar.gz --clobber

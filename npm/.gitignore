@@ -1,4 +1,1 @@
 node_modules/
-bin/{{project-name}}
-bin/*.exe
-bin/*.tar.gz

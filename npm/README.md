@@ -17,10 +17,17 @@ npm install -g @{{github-org}}/{{project-name}}
 
 ## How It Works
 
-This package downloads the pre-built binary for your platform from [GitHub Releases](https://github.com/{{github-org}}/{{project-name}}/releases). Supported platforms:
+This package uses platform-specific `optionalDependencies`. When you install,
+npm automatically downloads only the binary for your platform:
 
-- macOS (x64, arm64)
-- Linux (x64, arm64)
+| Package | Platform |
+|---------|----------|
+| `@{{github-org}}/{{project-name}}-darwin-arm64` | macOS Apple Silicon |
+| `@{{github-org}}/{{project-name}}-darwin-x64` | macOS Intel |
+| `@{{github-org}}/{{project-name}}-linux-arm64` | Linux ARM64 |
+| `@{{github-org}}/{{project-name}}-linux-x64` | Linux x86_64 |
+
+No `postinstall` scripts. No network calls at install time beyond the npm registry.
 
 For other platforms, build from source:
 

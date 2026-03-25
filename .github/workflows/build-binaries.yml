@@ -16,19 +16,23 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.target }}
+    name: Build ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-apple-darwin
+          - platform: darwin-arm64
+            target: aarch64-apple-darwin
             os: macos-latest
-          - target: aarch64-apple-darwin
+          - platform: darwin-x64
+            target: x86_64-apple-darwin
             os: macos-latest
-          - target: x86_64-unknown-linux-gnu
+          - platform: linux-arm64
+            target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-          - target: aarch64-unknown-linux-gnu
+          - platform: linux-x64
+            target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
 
     steps:
@@ -39,7 +43,7 @@ jobs:
 
       - name: Substitute template placeholders
         run: |
-          find . -type f \( -name '*.rs' -o -name '*.toml' -o -name '*.yml' -o -name '*.yaml' \) \
+          find . -type f \( -name '*.rs' -o -name '*.toml' \) \
             -exec sed -i'' -e 's/{{project-name}}/ci-test-app/g; s/{{crate_name}}/ci_test_app/g' {} +
 
       - name: Setup Rust
@@ -57,20 +61,9 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Package binary
-        run: |
-          BINARY_NAME="{{project-name}}"
-          VERSION="${{ inputs.version }}"
-          VERSION="${VERSION#v}"
-          ARTIFACT="{{project-name}}-v${VERSION}-${{ matrix.target }}"
-          mkdir -p staging
-          cp "target/${{ matrix.target }}/release/${BINARY_NAME}" staging/
-          cd staging
-          tar -czf "../${ARTIFACT}.tar.gz" "${BINARY_NAME}"
-
-      - name: Upload artifact
+      - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: binary-${{ matrix.target }}
-          path: "*.tar.gz"
+          name: ${{ matrix.platform }}
+          path: target/${{ matrix.target }}/release/ci-test-app
           retention-days: 1
