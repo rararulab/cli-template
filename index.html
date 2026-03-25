@@ -17,8 +17,8 @@
     <meta name="theme-color" content="#fafafa" />
     <!-- Progressive enhancement: add .js class so CSS can hide elements only when JS is available -->
     <script>document.documentElement.classList.add("js");</script>
-    <script type="module" crossorigin src="/cli-template/assets/index-BUcWsO8N.js"></script>
-    <link rel="stylesheet" crossorigin href="/cli-template/assets/index-JXeltsT6.css">
+    <script type="module" crossorigin src="/cli-template/assets/index-DiueJnZ9.js"></script>
+    <link rel="stylesheet" crossorigin href="/cli-template/assets/index-CeYdlxuw.css">
   </head>
   <body>
     <!-- Hero -->
@@ -65,11 +65,11 @@
             </p>
           </div>
           <div class="card reveal">
-            <span class="card__icon">&#x1F916;</span>
-            <h3 class="card__title">Agent Backend</h3>
+            <span class="card__icon">&#x26A1;</span>
+            <h3 class="card__title">npx Install</h3>
             <p class="card__desc">
-              Built-in agent execution layer for AI-powered CLI workflows,
-              ready to extend.
+              Run instantly via npx — no Rust toolchain required.
+              Pre-built binaries for macOS and Linux.
             </p>
           </div>
           <div class="card reveal">
@@ -81,11 +81,11 @@
             </p>
           </div>
           <div class="card reveal">
-            <span class="card__icon">&#x2699;&#xFE0F;</span>
-            <h3 class="card__title">Config System</h3>
+            <span class="card__icon">&#x1F9E0;</span>
+            <h3 class="card__title">Claude Code Skills</h3>
             <p class="card__desc">
-              Layered configuration with environment overrides, file-based
-              defaults, and runtime merging.
+              Built-in skills teach Claude Code your project conventions.
+              Autonomous /dev pipeline from design to shipping.
             </p>
           </div>
           <div class="card reveal">
@@ -104,20 +104,33 @@
     <section class="install" aria-labelledby="install-heading">
       <div class="container">
         <h2 id="install-heading" class="section-title section-title--light reveal">Get Started</h2>
+
+        <h3 class="install__method-title reveal">Use Instantly</h3>
         <div class="terminal reveal">
           <div class="terminal__bar">
             <span class="terminal__dot"></span>
             <span class="terminal__dot"></span>
             <span class="terminal__dot"></span>
           </div>
-          <pre class="terminal__body" aria-label="Terminal commands to get started"><code><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
+          <pre class="terminal__body" aria-label="Install via npx"><code><span class="terminal__prompt">$</span> npx @your-org/your-project --help</code></pre>
+        </div>
+
+        <h3 class="install__method-title reveal">Create Your Own</h3>
+        <div class="terminal reveal">
+          <div class="terminal__bar">
+            <span class="terminal__dot"></span>
+            <span class="terminal__dot"></span>
+            <span class="terminal__dot"></span>
+          </div>
+          <pre class="terminal__body" aria-label="Create from template"><code><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
 <span class="terminal__prompt">$</span> cd my-awesome-cli
 <span class="terminal__prompt">$</span> cargo run -- --help</code></pre>
         </div>
+
         <ol class="steps reveal">
-          <li>Generate your project from the template</li>
-          <li>Replace placeholder names in <code>Cargo.toml</code> and <code>CLAUDE.md</code></li>
-          <li>Start building your CLI commands</li>
+          <li>Install instantly via <code>npx</code> — no Rust required</li>
+          <li>Or generate your own project from the template</li>
+          <li>Claude Code skills guide your development workflow</li>
         </ol>
       </div>
     </section>
