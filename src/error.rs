@@ -1,4 +1,11 @@
 //! Application-level error types.
+//!
+//! ## Agent-friendly error output
+//!
+//! When reporting errors to stdout as JSON, include a `suggestion` field:
+//! ```json
+//! {"ok": false, "error": "service not found", "suggestion": "run 'my-cli list' to see available services"}
+//! ```
 
 use snafu::Snafu;
 

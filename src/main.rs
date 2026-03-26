@@ -18,7 +18,7 @@ async fn main() {
         eprintln!("Error: {e}");
         println!(
             "{}",
-            serde_json::json!({"ok": false, "error": e.to_string()})
+            serde_json::json!({"ok": false, "error": e.to_string(), "suggestion": "check --help for usage"})
         );
         std::process::exit(1);
     }
