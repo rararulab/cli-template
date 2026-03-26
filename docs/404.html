@@ -1,24 +1,21 @@
 <!DOCTYPE HTML>
-<html lang="en" class="light sidebar-visible" dir="ltr">
+<html lang="en" class="coal sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Page not found - cli-template</title>
         <base href="/">
 
-        <!-- rara fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <!-- Custom HTML head -->
 
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#fafafa">
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-15251ad2.css">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
         <link rel="stylesheet" href="css/general-2459343d.css">
         <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
@@ -32,14 +29,14 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="theme/rara-33c3d993.css">
+        <link rel="stylesheet" href="theme/rara-de27937f.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "";
-            const default_light_theme = "light";
-            const default_dark_theme = "light";
+            const default_light_theme = "coal";
+            const default_dark_theme = "coal";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-9c0fa5fd.js"></script>
@@ -79,7 +76,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('light')
+            html.classList.remove('coal')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -199,22 +196,6 @@
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
         <script src="book-a0b12cfe.js"></script>
-
-        <!-- rara: make "Back to site" pseudo-element clickable -->
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var scrollbox = document.querySelector('.sidebar-scrollbox');
-            if (scrollbox) {
-                scrollbox.addEventListener('click', function(e) {
-                    var rect = scrollbox.getBoundingClientRect();
-                    // Click in the bottom 50px area (where ::after renders)
-                    if (e.clientY > rect.bottom - 50 && e.clientY <= rect.bottom) {
-                        window.location.href = '../';
-                    }
-                });
-            }
-        });
-        </script>
 
         <!-- Custom JS scripts -->
 

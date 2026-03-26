@@ -1,0 +1,198 @@
+/* Rosé Pine for mdBook — https://rosepinetheme.com */
+
+/*
+ * Rosé Pine Moon  → default dark (coal/navy/ayu)
+ * Rosé Pine Dawn  → light theme
+ * Rosé Pine       → rust theme
+ */
+
+/* ===== Rosé Pine Dawn (light) ===== */
+.light, html:not(.js) {
+    --bg: #faf4ed;
+    --fg: #575279;
+
+    --sidebar-bg: #fffaf3;
+    --sidebar-fg: #797593;
+    --sidebar-non-existant: #9893a5;
+    --sidebar-active: #d7827e;
+    --sidebar-spacer: #f2e9e1;
+
+    --scrollbar: #9893a5;
+
+    --icons: #797593;
+    --icons-hover: #575279;
+
+    --links: #d7827e;
+
+    --inline-code-color: #575279;
+
+    --theme-popup-bg: #fffaf3;
+    --theme-popup-border: #f2e9e1;
+    --theme-hover: #f2e9e1;
+
+    --quote-bg: #f2e9e1;
+    --quote-border: #d7827e;
+
+    --warning-border: #ea9d34;
+
+    --table-border-color: #f2e9e1;
+    --table-header-bg: #f2e9e1;
+    --table-alternate-bg: #faf4ed;
+
+    --searchbar-border-color: #f2e9e1;
+    --searchbar-bg: #fffaf3;
+    --searchbar-fg: #575279;
+    --searchbar-shadow-color: rgba(215, 130, 126, 0.2);
+    --searchresults-header-fg: #797593;
+    --searchresults-border-color: #f2e9e1;
+    --searchresults-li-bg: rgba(215, 130, 126, 0.05);
+    --search-mark-bg: rgba(234, 157, 52, 0.3);
+
+    --color-scheme: light;
+}
+
+/* ===== Rosé Pine (original) ===== */
+.rust {
+    --bg: #191724;
+    --fg: #e0def4;
+
+    --sidebar-bg: #1f1d2e;
+    --sidebar-fg: #908caa;
+    --sidebar-non-existant: #6e6a86;
+    --sidebar-active: #ebbcba;
+    --sidebar-spacer: #26233a;
+
+    --scrollbar: #6e6a86;
+
+    --icons: #908caa;
+    --icons-hover: #e0def4;
+
+    --links: #ebbcba;
+
+    --inline-code-color: #e0def4;
+
+    --theme-popup-bg: #1f1d2e;
+    --theme-popup-border: #26233a;
+    --theme-hover: #26233a;
+
+    --quote-bg: #1f1d2e;
+    --quote-border: #ebbcba;
+
+    --warning-border: #f6c177;
+
+    --table-border-color: #26233a;
+    --table-header-bg: #26233a;
+    --table-alternate-bg: #1f1d2e;
+
+    --searchbar-border-color: #26233a;
+    --searchbar-bg: #1f1d2e;
+    --searchbar-fg: #e0def4;
+    --searchbar-shadow-color: rgba(235, 188, 186, 0.2);
+    --searchresults-header-fg: #908caa;
+    --searchresults-border-color: #26233a;
+    --searchresults-li-bg: rgba(235, 188, 186, 0.05);
+    --search-mark-bg: rgba(246, 193, 119, 0.3);
+
+    --color-scheme: dark;
+}
+
+/* ===== Rosé Pine Moon (dark default) ===== */
+.coal, .navy, .ayu {
+    --bg: #232136;
+    --fg: #e0def4;
+
+    --sidebar-bg: #2a273f;
+    --sidebar-fg: #908caa;
+    --sidebar-non-existant: #6e6a86;
+    --sidebar-active: #ea9a97;
+    --sidebar-spacer: #393552;
+
+    --scrollbar: #6e6a86;
+
+    --icons: #908caa;
+    --icons-hover: #e0def4;
+
+    --links: #ea9a97;
+
+    --inline-code-color: #e0def4;
+
+    --theme-popup-bg: #2a273f;
+    --theme-popup-border: #393552;
+    --theme-hover: #393552;
+
+    --quote-bg: #2a273f;
+    --quote-border: #ea9a97;
+
+    --warning-border: #f6c177;
+
+    --table-border-color: #393552;
+    --table-header-bg: #393552;
+    --table-alternate-bg: #2a273f;
+
+    --searchbar-border-color: #393552;
+    --searchbar-bg: #2a273f;
+    --searchbar-fg: #e0def4;
+    --searchbar-shadow-color: rgba(234, 154, 151, 0.2);
+    --searchresults-header-fg: #908caa;
+    --searchresults-border-color: #393552;
+    --searchresults-li-bg: rgba(234, 154, 151, 0.05);
+    --search-mark-bg: rgba(246, 193, 119, 0.3);
+
+    --color-scheme: dark;
+}
+
+/* ===== Dark preference fallback ===== */
+@media (prefers-color-scheme: dark) {
+    html:not(.js) {
+        --bg: #232136;
+        --fg: #e0def4;
+        --sidebar-bg: #2a273f;
+        --sidebar-fg: #908caa;
+        --sidebar-non-existant: #6e6a86;
+        --sidebar-active: #ea9a97;
+        --sidebar-spacer: #393552;
+        --scrollbar: #6e6a86;
+        --icons: #908caa;
+        --icons-hover: #e0def4;
+        --links: #ea9a97;
+        --inline-code-color: #e0def4;
+        --theme-popup-bg: #2a273f;
+        --theme-popup-border: #393552;
+        --theme-hover: #393552;
+        --quote-bg: #2a273f;
+        --quote-border: #ea9a97;
+        --warning-border: #f6c177;
+        --table-border-color: #393552;
+        --table-header-bg: #393552;
+        --table-alternate-bg: #2a273f;
+        --searchbar-border-color: #393552;
+        --searchbar-bg: #2a273f;
+        --searchbar-fg: #e0def4;
+        --searchbar-shadow-color: rgba(234, 154, 151, 0.2);
+        --searchresults-header-fg: #908caa;
+        --searchresults-border-color: #393552;
+        --searchresults-li-bg: rgba(234, 154, 151, 0.05);
+        --search-mark-bg: rgba(246, 193, 119, 0.3);
+        --color-scheme: dark;
+    }
+}
+
+/* ===== Code block syntax colors (Rosé Pine Moon) ===== */
+.coal pre, .navy pre, .ayu pre,
+.rust pre {
+    background: #2a273f !important;
+}
+
+.coal code, .navy code, .ayu code,
+.rust code {
+    color: #e0def4;
+}
+
+/* ===== Code block syntax colors (Rosé Pine Dawn) ===== */
+.light pre {
+    background: #f2e9e1 !important;
+}
+
+.light code {
+    color: #575279;
+}
