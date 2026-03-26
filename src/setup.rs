@@ -21,27 +21,32 @@ pub fn collect_params(
     org: Option<String>,
     path: Option<PathBuf>,
 ) -> error::Result<SetupParams> {
-    let stdin = io::stdin();
-    let mut reader = stdin.lock();
+    let (project_name, github_org) = {
+        let stdin = io::stdin();
+        let mut reader = stdin.lock();
 
-    let project_name = match name {
-        Some(n) => n,
-        None => prompt(&mut reader, "Project name (kebab-case)")?,
-    };
+        let project_name = match name {
+            Some(n) => n,
+            None => prompt(&mut reader, "Project name (kebab-case)")?,
+        };
 
-    validate_project_name(&project_name)?;
+        validate_project_name(&project_name)?;
 
-    let github_org = match org {
-        Some(o) => o,
-        None => prompt_with_default(&mut reader, "GitHub org/username", "rararulab")?,
+        let github_org = match org {
+            Some(o) => o,
+            None => prompt_with_default(&mut reader, "GitHub org/username", "rararulab")?,
+        };
+
+        drop(reader);
+        (project_name, github_org)
     };
 
     let crate_name = project_name.replace('-', "_");
 
-    let output_dir = match path {
-        Some(p) => p.join(&project_name),
-        None => PathBuf::from(&project_name),
-    };
+    let output_dir = path.map_or_else(
+        || PathBuf::from(&project_name),
+        |p| p.join(&project_name),
+    );
 
     if output_dir.exists() {
         return ValidationSnafu {
