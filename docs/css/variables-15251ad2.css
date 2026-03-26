@@ -1,0 +1,128 @@
+/* rara theme variables — light only */
+
+:root {
+    --sidebar-target-width: 260px;
+    --sidebar-width: min(var(--sidebar-target-width), 80vw);
+    --sidebar-resize-indicator-width: 8px;
+    --sidebar-resize-indicator-space: 2px;
+    --page-padding: 15px;
+    --content-max-width: 750px;
+    --menu-bar-height: 50px;
+    --mono-font: "JetBrains Mono", ui-monospace, monospace;
+    --code-font-size: 0.875em;
+    --searchbar-margin-block-start: 5px;
+
+    /* rara palette */
+    --rara-ink: #3d2b2e;
+    --rara-ink-deep: #1a1214;
+    --rara-ink-mid: #261c1e;
+    --rara-muted: #8c7478;
+    --rara-subtle: #b8a0a4;
+    --rara-line: #f0dee0;
+    --rara-surface: #ffffff;
+    --rara-bg: #fafafa;
+    --rara-pop: #e8788a;
+    --rara-pop-hover: #d4606f;
+    --rara-ok: #7bc4a0;
+}
+
+/* Single light theme — all selectors map to rara palette */
+.light, .coal, .navy, .rust, .ayu, html:not(.js) {
+    --bg: var(--rara-bg);
+    --fg: var(--rara-ink);
+
+    --sidebar-bg: var(--rara-surface);
+    --sidebar-fg: var(--rara-muted);
+    --sidebar-non-existant: var(--rara-subtle);
+    --sidebar-active: var(--rara-pop);
+    --sidebar-spacer: var(--rara-line);
+
+    --scrollbar: var(--rara-subtle);
+
+    --icons: var(--rara-muted);
+    --icons-hover: var(--rara-ink);
+
+    --links: var(--rara-pop);
+
+    --inline-code-color: var(--rara-ink);
+
+    --theme-popup-bg: var(--rara-surface);
+    --theme-popup-border: var(--rara-line);
+    --theme-hover: var(--rara-bg);
+
+    --quote-bg: var(--rara-bg);
+    --quote-border: var(--rara-line);
+
+    --warning-border: var(--rara-pop);
+
+    --table-border-color: var(--rara-line);
+    --table-header-bg: var(--rara-line);
+    --table-alternate-bg: var(--rara-bg);
+
+    --searchbar-border-color: var(--rara-line);
+    --searchbar-bg: var(--rara-surface);
+    --searchbar-fg: var(--rara-ink);
+    --searchbar-shadow-color: rgba(232, 120, 138, 0.3);
+    --searchresults-header-fg: var(--rara-muted);
+    --searchresults-border-color: var(--rara-line);
+    --searchresults-li-bg: rgba(232, 120, 138, 0.05);
+    --search-mark-bg: rgba(232, 120, 138, 0.25);
+
+    --color-scheme: light;
+
+    --copy-button-filter: invert(50%) sepia(10%) saturate(500%) hue-rotate(310deg) brightness(90%) contrast(90%);
+    --copy-button-filter-hover: invert(55%) sepia(30%) saturate(1200%) hue-rotate(320deg) brightness(95%) contrast(95%);
+
+    --footnote-highlight: var(--rara-pop);
+
+    --overlay-bg: rgba(61, 43, 46, 0.3);
+
+    --blockquote-note-color: #4493f8;
+    --blockquote-tip-color: var(--rara-ok);
+    --blockquote-important-color: #8250df;
+    --blockquote-warning-color: #d29922;
+    --blockquote-caution-color: var(--rara-pop);
+
+    --sidebar-header-border-color: var(--rara-pop);
+}
+
+/* Override dark preference — always light */
+@media (prefers-color-scheme: dark) {
+    html:not(.js) {
+        --bg: var(--rara-bg);
+        --fg: var(--rara-ink);
+        --sidebar-bg: var(--rara-surface);
+        --sidebar-fg: var(--rara-muted);
+        --sidebar-non-existant: var(--rara-subtle);
+        --sidebar-active: var(--rara-pop);
+        --sidebar-spacer: var(--rara-line);
+        --scrollbar: var(--rara-subtle);
+        --icons: var(--rara-muted);
+        --icons-hover: var(--rara-ink);
+        --links: var(--rara-pop);
+        --inline-code-color: var(--rara-ink);
+        --theme-popup-bg: var(--rara-surface);
+        --theme-popup-border: var(--rara-line);
+        --theme-hover: var(--rara-bg);
+        --quote-bg: var(--rara-bg);
+        --quote-border: var(--rara-line);
+        --warning-border: var(--rara-pop);
+        --table-border-color: var(--rara-line);
+        --table-header-bg: var(--rara-line);
+        --table-alternate-bg: var(--rara-bg);
+        --searchbar-border-color: var(--rara-line);
+        --searchbar-bg: var(--rara-surface);
+        --searchbar-fg: var(--rara-ink);
+        --searchbar-shadow-color: rgba(232, 120, 138, 0.3);
+        --searchresults-header-fg: var(--rara-muted);
+        --searchresults-border-color: var(--rara-line);
+        --searchresults-li-bg: rgba(232, 120, 138, 0.05);
+        --search-mark-bg: rgba(232, 120, 138, 0.25);
+        --color-scheme: light;
+        --copy-button-filter: invert(50%) sepia(10%) saturate(500%) hue-rotate(310deg) brightness(90%) contrast(90%);
+        --copy-button-filter-hover: invert(55%) sepia(30%) saturate(1200%) hue-rotate(320deg) brightness(95%) contrast(95%);
+        --footnote-highlight: var(--rara-pop);
+        --overlay-bg: rgba(61, 43, 46, 0.3);
+        --sidebar-header-border-color: var(--rara-pop);
+    }
+}
