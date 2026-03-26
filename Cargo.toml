@@ -5,6 +5,7 @@ edition = "2024"
 description = "Scaffold new Rust CLI projects from the rara-cli-template"
 license = "MIT"
 repository = "https://github.com/rararulab/cli-template"
+homepage = "https://github.com/rararulab/cli-template"
 
 [[bin]]
 name = "rara-cli-template"
@@ -36,7 +37,7 @@ redundant_pub_crate = "allow"
 
 # Config for cargo-dist — generates release binaries + Homebrew formula
 [workspace.metadata.dist]
-cargo-dist-version = "0.28.0"
+cargo-dist-version = "0.31.0"
 ci = "github"
 installers = ["shell", "homebrew"]
 targets = ["aarch64-apple-darwin", "x86_64-unknown-linux-gnu"]
