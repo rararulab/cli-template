@@ -17,8 +17,8 @@
     <meta name="theme-color" content="#fafafa" />
     <!-- Progressive enhancement: add .js class so CSS can hide elements only when JS is available -->
     <script>document.documentElement.classList.add("js");</script>
-    <script type="module" crossorigin src="/cli-template/assets/index-CoRszH7M.js"></script>
-    <link rel="stylesheet" crossorigin href="/cli-template/assets/index-B8rJLzks.css">
+    <script type="module" crossorigin src="/cli-template/assets/index-C-Z-Kh8Q.js"></script>
+    <link rel="stylesheet" crossorigin href="/cli-template/assets/index-CimjViFn.css">
   </head>
   <body>
     <!-- Hero -->
@@ -81,11 +81,11 @@
             </p>
           </div>
           <div class="card reveal">
-            <span class="card__icon">&#x1F9E0;</span>
-            <h3 class="card__title">Claude Code Skills</h3>
+            <span class="card__icon">&#x1F916;</span>
+            <h3 class="card__title">Agent-Friendly</h3>
             <p class="card__desc">
-              Built-in skills teach Claude Code your project conventions.
-              Autonomous /dev pipeline from design to shipping.
+              JSON stdout, actionable errors, example-driven help &mdash;
+              designed for AI agents to operate reliably.
             </p>
           </div>
           <div class="card reveal">
@@ -95,6 +95,67 @@
               Conventional commits, changelogs, and version bumps handled
               automatically by release-plz.
             </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agent-Friendly Design -->
+    <section class="agent-design" aria-labelledby="agent-heading">
+      <div class="container">
+        <h2 id="agent-heading" class="section-title reveal">Built for AI Agents</h2>
+        <p class="agent-design__intro reveal">
+          AI agents operate your CLI programmatically. This template bakes in the
+          <a href="https://github.com/rararulab/.github/blob/main/docs/agent-friendly-cli.md" class="agent-design__link">rararulab agent-friendly CLI standards</a>
+          so every generated project is agent-ready from day one.
+        </p>
+        <div class="principles">
+          <div class="principle reveal">
+            <span class="principle__number">01</span>
+            <h3 class="principle__title">JSON stdout, logs stderr</h3>
+            <p class="principle__desc">Structured output on stdout for machine parsing. Human-readable logs on stderr. Never mix formats.</p>
+          </div>
+          <div class="principle reveal">
+            <span class="principle__number">02</span>
+            <h3 class="principle__title">Fail fast with suggestions</h3>
+            <p class="principle__desc">Every error includes a <code>suggestion</code> field so agents can self-correct without human intervention.</p>
+          </div>
+          <div class="principle reveal">
+            <span class="principle__number">03</span>
+            <h3 class="principle__title">Non-interactive first</h3>
+            <p class="principle__desc">Every parameter passable via flags. No stdin prompts without a flag equivalent. Agents cannot handle dynamic prompts.</p>
+          </div>
+          <div class="principle reveal">
+            <span class="principle__number">04</span>
+            <h3 class="principle__title">Example-driven help</h3>
+            <p class="principle__desc">Every subcommand's <code>--help</code> includes runnable examples. Agents pattern-match better than they parse prose.</p>
+          </div>
+          <div class="principle reveal">
+            <span class="principle__number">05</span>
+            <h3 class="principle__title">Idempotent operations</h3>
+            <p class="principle__desc">Agents retry frequently. Create operations return success if the resource already exists &mdash; no duplicate side effects.</p>
+          </div>
+          <div class="principle reveal">
+            <span class="principle__number">06</span>
+            <h3 class="principle__title">Dry-run &amp; force bypass</h3>
+            <p class="principle__desc">Destructive commands support <code>--dry-run</code>. Interactive confirmations have <code>--yes</code> to bypass. Safe automation by default.</p>
+          </div>
+        </div>
+
+        <div class="agent-design__terminal reveal">
+          <div class="terminal">
+            <div class="terminal__bar">
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+            </div>
+            <pre class="terminal__body" aria-label="Agent-friendly JSON output"><code><span class="terminal__comment"># Success: structured JSON on stdout</span>
+<span class="terminal__prompt">$</span> my-cli deploy --env staging
+<span class="terminal__json">{"ok": true, "action": "deploy", "deploy_id": "d-123"}</span>
+
+<span class="terminal__comment"># Error: actionable suggestion included</span>
+<span class="terminal__prompt">$</span> my-cli deploy
+<span class="terminal__json-err">{"ok": false, "error": "missing --env", "suggestion": "add --env staging or --env prod"}</span></code></pre>
           </div>
         </div>
       </div>
@@ -128,9 +189,9 @@
         </div>
 
         <ol class="steps reveal">
-          <li>Install instantly via <code>npx</code> — no Rust required</li>
-          <li>Or generate your own project from the template</li>
-          <li>Claude Code skills guide your development workflow</li>
+          <li>Install instantly via <code>npx</code> &mdash; no Rust required</li>
+          <li>Or generate your own project with <code>cargo generate</code></li>
+          <li>Agent-friendly by default &mdash; JSON output, actionable errors</li>
         </ol>
       </div>
     </section>
