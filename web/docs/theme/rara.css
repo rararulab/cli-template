@@ -1,393 +1,198 @@
-/* rara theme overrides — unified with landing page */
+/* Rosé Pine for mdBook — https://rosepinetheme.com */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Nunito:wght@400;600;700;800&display=swap');
+/*
+ * Rosé Pine Moon  → default dark (coal/navy/ayu)
+ * Rosé Pine Dawn  → light theme
+ * Rosé Pine       → rust theme
+ */
 
-/* ===== Typography ===== */
+/* ===== Rosé Pine Dawn (light) ===== */
+.light, html:not(.js) {
+    --bg: #faf4ed;
+    --fg: #575279;
 
-html {
-    font-family: 'Nunito', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    --sidebar-bg: #fffaf3;
+    --sidebar-fg: #797593;
+    --sidebar-non-existant: #9893a5;
+    --sidebar-active: #d7827e;
+    --sidebar-spacer: #f2e9e1;
+
+    --scrollbar: #9893a5;
+
+    --icons: #797593;
+    --icons-hover: #575279;
+
+    --links: #d7827e;
+
+    --inline-code-color: #575279;
+
+    --theme-popup-bg: #fffaf3;
+    --theme-popup-border: #f2e9e1;
+    --theme-hover: #f2e9e1;
+
+    --quote-bg: #f2e9e1;
+    --quote-border: #d7827e;
+
+    --warning-border: #ea9d34;
+
+    --table-border-color: #f2e9e1;
+    --table-header-bg: #f2e9e1;
+    --table-alternate-bg: #faf4ed;
+
+    --searchbar-border-color: #f2e9e1;
+    --searchbar-bg: #fffaf3;
+    --searchbar-fg: #575279;
+    --searchbar-shadow-color: rgba(215, 130, 126, 0.2);
+    --searchresults-header-fg: #797593;
+    --searchresults-border-color: #f2e9e1;
+    --searchresults-li-bg: rgba(215, 130, 126, 0.05);
+    --search-mark-bg: rgba(234, 157, 52, 0.3);
+
+    --color-scheme: light;
 }
 
-code, pre, .hljs {
-    font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+/* ===== Rosé Pine (original) ===== */
+.rust {
+    --bg: #191724;
+    --fg: #e0def4;
+
+    --sidebar-bg: #1f1d2e;
+    --sidebar-fg: #908caa;
+    --sidebar-non-existant: #6e6a86;
+    --sidebar-active: #ebbcba;
+    --sidebar-spacer: #26233a;
+
+    --scrollbar: #6e6a86;
+
+    --icons: #908caa;
+    --icons-hover: #e0def4;
+
+    --links: #ebbcba;
+
+    --inline-code-color: #e0def4;
+
+    --theme-popup-bg: #1f1d2e;
+    --theme-popup-border: #26233a;
+    --theme-hover: #26233a;
+
+    --quote-bg: #1f1d2e;
+    --quote-border: #ebbcba;
+
+    --warning-border: #f6c177;
+
+    --table-border-color: #26233a;
+    --table-header-bg: #26233a;
+    --table-alternate-bg: #1f1d2e;
+
+    --searchbar-border-color: #26233a;
+    --searchbar-bg: #1f1d2e;
+    --searchbar-fg: #e0def4;
+    --searchbar-shadow-color: rgba(235, 188, 186, 0.2);
+    --searchresults-header-fg: #908caa;
+    --searchresults-border-color: #26233a;
+    --searchresults-li-bg: rgba(235, 188, 186, 0.05);
+    --search-mark-bg: rgba(246, 193, 119, 0.3);
+
+    --color-scheme: dark;
 }
 
-/* ===== Headings ===== */
+/* ===== Rosé Pine Moon (dark default) ===== */
+.coal, .navy, .ayu {
+    --bg: #232136;
+    --fg: #e0def4;
 
-.content h1, .content h2, .content h3, .content h4 {
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-weight: 800;
-    color: var(--rara-ink);
+    --sidebar-bg: #2a273f;
+    --sidebar-fg: #908caa;
+    --sidebar-non-existant: #6e6a86;
+    --sidebar-active: #ea9a97;
+    --sidebar-spacer: #393552;
+
+    --scrollbar: #6e6a86;
+
+    --icons: #908caa;
+    --icons-hover: #e0def4;
+
+    --links: #ea9a97;
+
+    --inline-code-color: #e0def4;
+
+    --theme-popup-bg: #2a273f;
+    --theme-popup-border: #393552;
+    --theme-hover: #393552;
+
+    --quote-bg: #2a273f;
+    --quote-border: #ea9a97;
+
+    --warning-border: #f6c177;
+
+    --table-border-color: #393552;
+    --table-header-bg: #393552;
+    --table-alternate-bg: #2a273f;
+
+    --searchbar-border-color: #393552;
+    --searchbar-bg: #2a273f;
+    --searchbar-fg: #e0def4;
+    --searchbar-shadow-color: rgba(234, 154, 151, 0.2);
+    --searchresults-header-fg: #908caa;
+    --searchresults-border-color: #393552;
+    --searchresults-li-bg: rgba(234, 154, 151, 0.05);
+    --search-mark-bg: rgba(246, 193, 119, 0.3);
+
+    --color-scheme: dark;
 }
 
-.content h1 { font-size: 2em; }
-
-/* ===== Links ===== */
-
-.content a:link, .content a:visited {
-    color: var(--rara-pop);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    text-decoration-thickness: 1px;
-}
-
-.content a:hover {
-    color: var(--rara-pop-hover);
-    text-decoration: underline;
-}
-
-/* ===== Sidebar ===== */
-
-.sidebar {
-    border-right: 1px solid var(--rara-line);
-}
-
-.sidebar .sidebar-scrollbox {
-    font-family: 'Nunito', system-ui, sans-serif;
-    padding: 16px 16px;
-}
-
-/* Brand title in sidebar */
-.sidebar .sidebar-scrollbox::before {
-    content: 'cli-template';
-    display: block;
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-weight: 800;
-    font-size: 1.3em;
-    color: var(--rara-pop);
-    padding-bottom: 12px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--rara-line);
-}
-
-.chapter li a {
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-weight: 600;
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin-left: -6px;
-}
-
-.chapter li a.active {
-    color: var(--rara-ink) !important;
-    font-weight: 700;
-    background: rgba(232, 120, 138, 0.08);
-    border-left: 3px solid var(--rara-pop);
-    padding-left: 8px;
-    margin-left: -9px;
-}
-
-.chapter li a:hover {
-    color: var(--rara-pop) !important;
-}
-
-/* Sidebar spacer */
-.chapter .spacer {
-    background-color: var(--rara-line);
-    height: 1px;
-    margin: 8px 0;
-}
-
-/* "On this page" section headers */
-.on-this-page {
-    border-inline-start-color: var(--rara-pop);
-}
-
-/* ===== Menu Bar ===== */
-
-#mdbook-menu-bar {
-    border-bottom: 1px solid var(--rara-line) !important;
-    background-color: var(--rara-surface);
-}
-
-.menu-title {
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 1.8rem;
-    color: var(--rara-ink);
-}
-
-/* Hide theme toggle button */
-#mdbook-theme-toggle {
-    display: none !important;
-}
-
-#mdbook-theme-list {
-    display: none !important;
-}
-
-/* ===== Content Area ===== */
-
-.page-wrapper {
-    background-color: var(--rara-surface);
-}
-
-.content {
-    font-family: 'Nunito', system-ui, sans-serif;
-    line-height: 1.6;
-}
-
-.content p {
-    line-height: 1.7;
-    margin-bottom: 1em;
-}
-
-/* ===== Code Blocks — Terminal Style ===== */
-
-pre {
-    background: var(--rara-ink-deep) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    margin: 24px 0 !important;
-    padding-top: 36px !important;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Terminal dots via pseudo-element */
-pre::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    left: 16px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--rara-muted);
-    opacity: 0.5;
-    box-shadow:
-        20px 0 0 var(--rara-muted),
-        40px 0 0 var(--rara-muted);
-}
-
-/* Terminal bar background */
-pre::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 36px;
-    background: var(--rara-ink-mid);
-    border-radius: 12px 12px 0 0;
-    z-index: 0;
-}
-
-/* Ensure dots render above bar */
-pre::before {
-    z-index: 1;
-}
-
-pre > code {
-    display: block;
-    padding: 16px !important;
-    color: var(--rara-subtle);
-    font-size: 0.875rem;
-    line-height: 1.8;
-    position: relative;
-    z-index: 1;
-}
-
-/* Copy button adjustments for terminal style */
-pre > .buttons {
-    top: 40px;
-    z-index: 2;
-}
-
-pre > .buttons button {
-    background-color: var(--rara-ink-mid);
-    border-color: var(--rara-muted);
-    color: var(--rara-subtle);
-}
-
-pre > .buttons button:hover {
-    border-color: var(--rara-pop);
-    color: var(--rara-pop);
-    background-color: var(--rara-ink-deep);
-}
-
-/* ===== Inline Code ===== */
-
-:not(pre):not(a) > .hljs,
-:not(pre) > code {
-    background: var(--rara-line) !important;
-    color: var(--rara-ink) !important;
-    padding: 2px 6px !important;
-    border-radius: 6px !important;
-    font-size: 0.875em;
-}
-
-/* ===== Blockquotes ===== */
-
-blockquote {
-    border-left: 3px solid var(--rara-pop) !important;
-    border-top: none !important;
-    border-bottom: none !important;
-    background: var(--rara-bg) !important;
-    padding: 12px 16px !important;
-    border-radius: 0 8px 8px 0 !important;
-    margin: 16px 0 !important;
-    color: var(--rara-ink);
-}
-
-.blockquote-tag {
-    border-inline-start-width: 3px;
-}
-
-/* ===== Tables ===== */
-
-table {
-    border-collapse: collapse;
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-table thead {
-    background: var(--rara-line) !important;
-}
-
-table thead th,
-table thead td {
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-weight: 700;
-    color: var(--rara-ink);
-    padding: 8px 16px;
-}
-
-table td {
-    padding: 8px 16px;
-    border-color: var(--rara-line);
-}
-
-table tbody tr:nth-child(2n) {
-    background: var(--rara-bg);
-}
-
-/* ===== Search ===== */
-
-#mdbook-searchbar {
-    border-radius: 8px;
-    border-color: var(--rara-line);
-    font-family: 'Nunito', system-ui, sans-serif;
-}
-
-#mdbook-searchbar:focus {
-    border-color: var(--rara-pop);
-    box-shadow: 0 0 0 3px rgba(232, 120, 138, 0.15) !important;
-    outline: none;
-}
-
-mark {
-    background-color: rgba(232, 120, 138, 0.25);
-    color: inherit;
-    border-radius: 2px;
-}
-
-#mdbook-searchresults a {
-    color: var(--rara-pop);
-}
-
-#mdbook-searchresults a:hover {
-    color: var(--rara-pop-hover);
-}
-
-/* ===== Navigation Arrows ===== */
-
-.nav-chapters:hover {
-    background-color: rgba(232, 120, 138, 0.05);
-    color: var(--rara-pop);
-}
-
-.mobile-nav-chapters {
-    background-color: var(--rara-bg);
-    border: 1px solid var(--rara-line);
-    border-radius: 8px;
-    color: var(--rara-muted);
-}
-
-.mobile-nav-chapters:hover {
-    color: var(--rara-pop);
-}
-
-/* ===== Help Popup ===== */
-
-#mdbook-help-popup {
-    border-color: var(--rara-line);
-    border-radius: 12px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* ===== Scrollbar ===== */
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: var(--rara-line);
-    border-radius: 4px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background: var(--rara-subtle);
-}
-
-/* ===== Focus States ===== */
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-    outline: 2px solid var(--rara-pop);
-    outline-offset: 2px;
-}
-
-/* ===== Back to Site Link ===== */
-
-.sidebar .sidebar-scrollbox::after {
-    content: '← Back to site';
-    display: block;
-    font-family: 'Nunito', system-ui, sans-serif;
-    font-size: 0.85em;
-    font-weight: 600;
-    color: var(--rara-muted);
-    padding-top: 16px;
-    margin-top: 16px;
-    border-top: 1px solid var(--rara-line);
-    cursor: pointer;
-}
-
-/* ===== Syntax Highlight Overrides (dark code on light page) ===== */
-
-pre .hljs-keyword,
-pre .hljs-tag { color: #f0a1b1; }
-
-pre .hljs-string,
-pre .hljs-literal { color: #7bc4a0; }
-
-pre .hljs-number { color: #d4a0e0; }
-
-pre .hljs-comment { color: var(--rara-muted); font-style: italic; }
-
-pre .hljs-function,
-pre .hljs-title { color: #e8c47a; }
-
-pre .hljs-type,
-pre .hljs-built_in { color: #7ab8d4; }
-
-pre .hljs-attr,
-pre .hljs-attribute { color: #e8788a; }
-
-pre .hljs-symbol,
-pre .hljs-meta { color: var(--rara-subtle); }
-
-/* ===== Task List Checkboxes ===== */
-
-.content input[type="checkbox"] {
-    accent-color: var(--rara-pop);
-}
-
-/* ===== Reduced Motion ===== */
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
+/* ===== Dark preference fallback ===== */
+@media (prefers-color-scheme: dark) {
+    html:not(.js) {
+        --bg: #232136;
+        --fg: #e0def4;
+        --sidebar-bg: #2a273f;
+        --sidebar-fg: #908caa;
+        --sidebar-non-existant: #6e6a86;
+        --sidebar-active: #ea9a97;
+        --sidebar-spacer: #393552;
+        --scrollbar: #6e6a86;
+        --icons: #908caa;
+        --icons-hover: #e0def4;
+        --links: #ea9a97;
+        --inline-code-color: #e0def4;
+        --theme-popup-bg: #2a273f;
+        --theme-popup-border: #393552;
+        --theme-hover: #393552;
+        --quote-bg: #2a273f;
+        --quote-border: #ea9a97;
+        --warning-border: #f6c177;
+        --table-border-color: #393552;
+        --table-header-bg: #393552;
+        --table-alternate-bg: #2a273f;
+        --searchbar-border-color: #393552;
+        --searchbar-bg: #2a273f;
+        --searchbar-fg: #e0def4;
+        --searchbar-shadow-color: rgba(234, 154, 151, 0.2);
+        --searchresults-header-fg: #908caa;
+        --searchresults-border-color: #393552;
+        --searchresults-li-bg: rgba(234, 154, 151, 0.05);
+        --search-mark-bg: rgba(246, 193, 119, 0.3);
+        --color-scheme: dark;
     }
+}
+
+/* ===== Code block syntax colors (Rosé Pine Moon) ===== */
+.coal pre, .navy pre, .ayu pre,
+.rust pre {
+    background: #2a273f !important;
+}
+
+.coal code, .navy code, .ayu code,
+.rust code {
+    color: #e0def4;
+}
+
+/* ===== Code block syntax colors (Rosé Pine Dawn) ===== */
+.light pre {
+    background: #f2e9e1 !important;
+}
+
+.light code {
+    color: #575279;
 }

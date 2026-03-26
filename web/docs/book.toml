@@ -6,6 +6,6 @@ src = "src"
 
 [output.html]
 additional-css = ["theme/rara.css"]
-default-theme = "light"
-preferred-dark-theme = "light"
+default-theme = "coal"
+preferred-dark-theme = "coal"
 git-repository-url = "https://github.com/rararulab/cli-template"
