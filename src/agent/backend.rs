@@ -284,7 +284,7 @@ impl CliBackend {
     pub fn codex() -> Self {
         Self {
             command: "codex".to_string(),
-            args: vec!["exec".to_string(), "--yolo".to_string()],
+            args: vec!["exec".to_string(), "--full-auto".to_string()],
             prompt_mode: PromptMode::Arg,
             prompt_flag: None,
             output_format: OutputFormat::Text,
@@ -709,39 +709,37 @@ impl CliBackend {
         }
     }
 
-    /// Reconciles codex args to resolve conflicting flags.
+    /// Reconciles codex args to resolve conflicting and deprecated flags.
     ///
-    /// Replaces deprecated `--dangerously-bypass-approvals-and-sandbox` with
-    /// `--yolo`, removes `--full-auto` when `--yolo` is present, and
-    /// deduplicates `--yolo` entries.
+    /// Replaces deprecated `--dangerously-bypass-approvals-and-sandbox` and
+    /// `--yolo` with `--full-auto`, and deduplicates `--full-auto` entries.
     fn reconcile_codex_args(args: &mut Vec<String>) {
-        let had_dangerous_bypass = args
-            .iter()
-            .any(|arg| arg == "--dangerously-bypass-approvals-and-sandbox");
-        if had_dangerous_bypass {
-            args.retain(|arg| arg != "--dangerously-bypass-approvals-and-sandbox");
-            if !args.iter().any(|arg| arg == "--yolo") {
+        let had_deprecated = args.iter().any(|arg| {
+            arg == "--dangerously-bypass-approvals-and-sandbox" || arg == "--yolo"
+        });
+        if had_deprecated {
+            args.retain(|arg| {
+                arg != "--dangerously-bypass-approvals-and-sandbox" && arg != "--yolo"
+            });
+            if !args.iter().any(|arg| arg == "--full-auto") {
                 if let Some(pos) = args.iter().position(|arg| arg == "exec") {
-                    args.insert(pos + 1, "--yolo".to_string());
+                    args.insert(pos + 1, "--full-auto".to_string());
                 } else {
-                    args.push("--yolo".to_string());
+                    args.push("--full-auto".to_string());
                 }
             }
         }
 
-        if args.iter().any(|arg| arg == "--yolo") {
-            args.retain(|arg| arg != "--full-auto");
-            // Collapse duplicate --yolo entries to a single flag.
-            let mut seen_yolo = false;
-            args.retain(|arg| {
-                if arg == "--yolo" {
-                    if seen_yolo {
-                        return false;
-                    }
-                    seen_yolo = true;
+        // Collapse duplicate --full-auto entries.
+        let mut seen = false;
+        args.retain(|arg| {
+            if arg == "--full-auto" {
+                if seen {
+                    return false;
                 }
-                true
-            });
-        }
+                seen = true;
+            }
+            true
+        });
     }
 }
