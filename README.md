@@ -39,11 +39,16 @@ cargo install --path .
 
 ### From template
 
-1. `cargo generate rararulab/cli-template`
-2. Find and replace `{{project-name}}` with your project name
-3. Update `CLAUDE.md` with your project description
-4. Run `just setup-hooks` to install pre-commit hooks
-5. Start building!
+```bash
+cargo generate rararulab/cli-template
+```
+
+You'll be prompted for project name and GitHub org. Then:
+
+1. `cd <your-project>`
+2. Update `CLAUDE.md` with your project description
+3. Run `just setup-hooks` to install pre-commit hooks
+4. Start building!
 
 ## Development
 
@@ -106,19 +111,14 @@ Override via CLI:
 {{project-name}} config set agent.idle_timeout_secs 60
 ```
 
-## Claude Code Integration
+## Agent-Friendly CLI Design
 
-Built-in `/dev` skill for autonomous development pipeline:
+This template follows [rararulab agent-friendly CLI standards](https://github.com/rararulab/.github/blob/main/docs/agent-friendly-cli.md):
 
-```
-/dev <requirement>        # Full cycle: design → implement → review → ship
-/dev --quick <requirement> # Skip design & review for trivial changes
-```
-
-Includes:
-- `CLAUDE.md` with project conventions and code style guides
-- `/dev` skill with subagent prompts for implementation, code review, and design review
-- Development guides: workflow, commit style, Rust style, code comments, anti-patterns
+- **JSON stdout, logs stderr** — all commands output structured JSON on stdout
+- **Fail fast with suggestions** — errors include `suggestion` field for self-correction
+- **Non-interactive** — every parameter passable via flags
+- **Example-driven help** — each subcommand shows runnable examples in `--help`
 
 ## Project Structure
 
@@ -137,14 +137,6 @@ src/
 ├── app_config.rs   # TOML config with OnceLock
 ├── paths.rs        # Centralized data directory paths
 └── http.rs         # Shared reqwest HTTP clients
-
-.claude/
-└── skills/
-    └── dev/        # /dev autonomous development pipeline
-        ├── SKILL.md
-        └── references/
-            ├── templates.md
-            └── subagent-prompts.md
 
 npm/                # npx install package (optionalDependencies pattern)
 ├── package.json    # Main package with platform optionalDependencies
