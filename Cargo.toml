@@ -33,3 +33,13 @@ missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 must_use_candidate = "allow"
 redundant_pub_crate = "allow"
+
+# Config for cargo-dist — generates release binaries + Homebrew formula
+[workspace.metadata.dist]
+cargo-dist-version = "0.28.0"
+ci = "github"
+installers = ["shell", "homebrew"]
+targets = ["aarch64-apple-darwin", "x86_64-unknown-linux-gnu"]
+tap = "rararulab/homebrew-tap"
+publish-jobs = ["homebrew"]
+install-path = "CARGO_HOME"
