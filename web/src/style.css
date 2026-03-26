@@ -229,6 +229,93 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   line-height: 1.7;
 }
 
+/* ===== Agent-Friendly Design ===== */
+.agent-design {
+  padding: var(--sp-20) 0;
+  background: var(--color-surface);
+}
+
+.agent-design__intro {
+  max-width: 640px;
+  margin: 0 auto var(--sp-12);
+  text-align: center;
+  font-size: var(--text-lg);
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+.agent-design__link {
+  color: var(--color-pop);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--motion-fast);
+}
+
+.agent-design__link:hover {
+  color: var(--color-pop-hover);
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-12);
+}
+
+.principle {
+  padding: var(--sp-6);
+  border-left: 3px solid var(--color-pop);
+  background: var(--color-bg);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.principle__number {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-pop);
+  margin-bottom: var(--sp-2);
+}
+
+.principle__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--sp-2);
+}
+
+.principle__desc {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+.agent-design__terminal {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.terminal__comment {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.terminal__json {
+  color: var(--color-ok);
+}
+
+.terminal__json-err {
+  color: var(--color-pop);
+}
+
+/* Stagger for principles */
+html.js .principles .reveal:nth-child(1) { transition-delay: 0ms; }
+html.js .principles .reveal:nth-child(2) { transition-delay: 80ms; }
+html.js .principles .reveal:nth-child(3) { transition-delay: 160ms; }
+html.js .principles .reveal:nth-child(4) { transition-delay: 240ms; }
+html.js .principles .reveal:nth-child(5) { transition-delay: 320ms; }
+html.js .principles .reveal:nth-child(6) { transition-delay: 400ms; }
+
 /* ===== Install / Quickstart ===== */
 .install {
   padding: var(--sp-20) 0;
