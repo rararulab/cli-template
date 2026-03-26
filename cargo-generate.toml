@@ -1,0 +1,8 @@
+[template]
+cargo_generate_version = ">=0.18.0"
+description = "Opinionated Rust CLI template with AI agent support, NPX distribution, and CI/CD"
+
+[placeholders.github-org]
+type = "string"
+prompt = "GitHub organization or username"
+default = "rararulab"
