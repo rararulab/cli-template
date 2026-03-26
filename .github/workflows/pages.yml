@@ -10,5 +10,5 @@ jobs:
   deploy:
     uses: rararulab/workflows/.github/workflows/deploy-pages.yml@main
     with:
-      build-command: "cd web && npm ci && npm run build"
+      build-command: "cargo install mdbook --no-default-features && cd web && npm ci && npm run build && mdbook build docs && cp -r docs/book dist/docs"
       output-dir: "web/dist"
