@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="features" aria-labelledby="features-heading">
+  <div class="container">
+    <h2 id="features-heading" class="section-title reveal">{title}</h2>
+    <div class="features__grid">
+      <slot />
+    </div>
+  </div>
+</section>

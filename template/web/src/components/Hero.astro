@@ -1,0 +1,25 @@
+---
+interface Props {
+  label: string;
+  headline: string;
+  subtitle: string;
+  primaryCta: { text: string; href: string };
+  secondaryCta?: { text: string; href: string };
+}
+
+const { label, headline, subtitle, primaryCta, secondaryCta } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="container">
+    <span class="hero__label reveal">{label}</span>
+    <h1 id="hero-heading" class="hero__headline reveal" set:html={headline} />
+    <p class="hero__subtitle reveal">{subtitle}</p>
+    <div class="hero__actions reveal">
+      <a class="btn btn--pop" href={primaryCta.href} rel="noopener">{primaryCta.text}</a>
+      {secondaryCta && (
+        <a class="btn btn--outline" href={secondaryCta.href} rel="noopener">{secondaryCta.text}</a>
+      )}
+    </div>
+  </div>
+</section>

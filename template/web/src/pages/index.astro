@@ -1,0 +1,85 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Highlight from "../components/Highlight.astro";
+import CardGrid from "../components/CardGrid.astro";
+import Card from "../components/Card.astro";
+import Terminal from "../components/Terminal.astro";
+import Footer from "../components/Footer.astro";
+
+const project = {
+  name: "cli-template",
+  description: "A batteries-included Rust CLI template with structured errors, config management, CI/CD pipelines, and automated releases.",
+  github: "https://github.com/rararulab/cli-template",
+};
+---
+
+<Base title={`${project.name} — Batteries-Included Rust CLI Template`} description={project.description}>
+  <Header name={project.name} github={project.github} />
+
+  <Hero
+    label="Open Source CLI Template"
+    headline="Ship Rust CLIs<br />Without the Boilerplate"
+    subtitle="A batteries-included template with structured errors, config management, agent backend, CI/CD pipelines, and automated releases — so you can focus on your logic, not your scaffolding."
+    primaryCta={{ text: "View on GitHub", href: project.github }}
+    secondaryCta={{ text: "Get Started", href: "#quickstart" }}
+  />
+
+  <section class="features" style="padding-top: 0;">
+    <div class="container">
+      <Highlight title="Built for AI Agents">
+        Every generated project follows rararulab's agent-friendly CLI standards: JSON stdout for machine parsing, actionable error suggestions, non-interactive flags, example-driven help, idempotent operations, and <code>--dry-run</code> support.
+      </Highlight>
+    </div>
+  </section>
+
+  <CardGrid title="Everything You Need">
+    <Card
+      icon="🔋"
+      title="Batteries Included"
+      description="Clap argument parsing, tokio async runtime, and tracing observability wired up from day one."
+    />
+    <Card
+      icon="🛡️"
+      title="Snafu Errors"
+      description="Structured, contextual error handling with snafu — no manual Display or Error impls."
+    />
+    <Card
+      icon="⚡"
+      title="npx Install"
+      description="Run instantly via npx — no Rust toolchain required. Pre-built binaries for macOS and Linux."
+    />
+    <Card
+      icon="🚀"
+      title="CI/CD Ready"
+      description="GitHub Actions with lint, test, and release pipelines preconfigured and working out of the box."
+    />
+    <Card
+      icon="🤖"
+      title="Agent-Friendly"
+      description="JSON stdout, actionable errors, example-driven help — designed for AI agents to operate reliably."
+    />
+    <Card
+      icon="📦"
+      title="Release Automation"
+      description="Conventional commits, changelogs, and version bumps handled automatically by release-plz."
+    />
+  </CardGrid>
+
+  <section class="quickstart" id="quickstart" aria-labelledby="quickstart-heading">
+    <div class="container">
+      <h2 id="quickstart-heading" class="section-title section-title--light reveal">Get Started</h2>
+
+      <h3 class="quickstart__method-title reveal">Use Instantly</h3>
+      <Terminal label="Install via npx"><span class="terminal__prompt">$</span> npx @your-org/your-project --help</Terminal>
+
+      <h3 class="quickstart__method-title reveal">Create Your Own</h3>
+      <Terminal label="Create from template"><span class="terminal__prompt">$</span> cargo generate rararulab/cli-template
+<span class="terminal__prompt">$</span> cd my-awesome-cli
+<span class="terminal__prompt">$</span> cargo run -- --help</Terminal>
+    </div>
+  </section>
+
+  <Footer org="RararuLab" github={project.github} />
+</Base>

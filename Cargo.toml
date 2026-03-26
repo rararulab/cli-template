@@ -1,30 +1,25 @@
 [package]
-name = "{{project-name}}"
+name = "rara-cli-template"
 version = "0.1.0"
 edition = "2024"
-description = "TODO: describe your CLI"
+description = "Scaffold new Rust CLI projects from the rara-cli-template"
 license = "MIT"
-repository = "https://github.com/rararulab/{{project-name}}"
+repository = "https://github.com/rararulab/cli-template"
+
+[[bin]]
+name = "rara-cli-template"
+path = "src/main.rs"
 
 [dependencies]
-bon = "3"
 clap = { version = "4", features = ["derive"] }
-config = "0.15"
-dirs = "6"
-nix = { version = "0.30", features = ["signal"] }
-reqwest = { version = "0.13", features = ["json", "stream"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+include_dir = "0.7"
 snafu = "0.9"
-tempfile = "3"
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "io-util", "time", "sync"] }
-toml = "0.8"
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "process"] }
 
 [dev-dependencies]
 assert_cmd = "2"
 predicates = "3"
+tempfile = "3"
 
 [lints.rust]
 unsafe_code = "deny"

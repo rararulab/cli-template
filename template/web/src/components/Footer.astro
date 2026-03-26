@@ -1,0 +1,18 @@
+---
+interface Props {
+  org?: string;
+  github?: string;
+}
+
+const { org = "RararuLab", github } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <p class="footer__copy">&copy; {year} {org}</p>
+    {github && (
+      <a class="footer__link" href={github} rel="noopener" target="_blank">GitHub</a>
+    )}
+  </div>
+</footer>
