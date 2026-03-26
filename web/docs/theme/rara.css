@@ -1,0 +1,393 @@
+/* rara theme overrides — unified with landing page */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* ===== Typography ===== */
+
+html {
+    font-family: 'Nunito', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+code, pre, .hljs {
+    font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+}
+
+/* ===== Headings ===== */
+
+.content h1, .content h2, .content h3, .content h4 {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 800;
+    color: var(--rara-ink);
+}
+
+.content h1 { font-size: 2em; }
+
+/* ===== Links ===== */
+
+.content a:link, .content a:visited {
+    color: var(--rara-pop);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+}
+
+.content a:hover {
+    color: var(--rara-pop-hover);
+    text-decoration: underline;
+}
+
+/* ===== Sidebar ===== */
+
+.sidebar {
+    border-right: 1px solid var(--rara-line);
+}
+
+.sidebar .sidebar-scrollbox {
+    font-family: 'Nunito', system-ui, sans-serif;
+    padding: 16px 16px;
+}
+
+/* Brand title in sidebar */
+.sidebar .sidebar-scrollbox::before {
+    content: 'cli-template';
+    display: block;
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.3em;
+    color: var(--rara-pop);
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--rara-line);
+}
+
+.chapter li a {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: -6px;
+}
+
+.chapter li a.active {
+    color: var(--rara-ink) !important;
+    font-weight: 700;
+    background: rgba(232, 120, 138, 0.08);
+    border-left: 3px solid var(--rara-pop);
+    padding-left: 8px;
+    margin-left: -9px;
+}
+
+.chapter li a:hover {
+    color: var(--rara-pop) !important;
+}
+
+/* Sidebar spacer */
+.chapter .spacer {
+    background-color: var(--rara-line);
+    height: 1px;
+    margin: 8px 0;
+}
+
+/* "On this page" section headers */
+.on-this-page {
+    border-inline-start-color: var(--rara-pop);
+}
+
+/* ===== Menu Bar ===== */
+
+#mdbook-menu-bar {
+    border-bottom: 1px solid var(--rara-line) !important;
+    background-color: var(--rara-surface);
+}
+
+.menu-title {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--rara-ink);
+}
+
+/* Hide theme toggle button */
+#mdbook-theme-toggle {
+    display: none !important;
+}
+
+#mdbook-theme-list {
+    display: none !important;
+}
+
+/* ===== Content Area ===== */
+
+.page-wrapper {
+    background-color: var(--rara-surface);
+}
+
+.content {
+    font-family: 'Nunito', system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.content p {
+    line-height: 1.7;
+    margin-bottom: 1em;
+}
+
+/* ===== Code Blocks — Terminal Style ===== */
+
+pre {
+    background: var(--rara-ink-deep) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    margin: 24px 0 !important;
+    padding-top: 36px !important;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Terminal dots via pseudo-element */
+pre::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--rara-muted);
+    opacity: 0.5;
+    box-shadow:
+        20px 0 0 var(--rara-muted),
+        40px 0 0 var(--rara-muted);
+}
+
+/* Terminal bar background */
+pre::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: var(--rara-ink-mid);
+    border-radius: 12px 12px 0 0;
+    z-index: 0;
+}
+
+/* Ensure dots render above bar */
+pre::before {
+    z-index: 1;
+}
+
+pre > code {
+    display: block;
+    padding: 16px !important;
+    color: var(--rara-subtle);
+    font-size: 0.875rem;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+}
+
+/* Copy button adjustments for terminal style */
+pre > .buttons {
+    top: 40px;
+    z-index: 2;
+}
+
+pre > .buttons button {
+    background-color: var(--rara-ink-mid);
+    border-color: var(--rara-muted);
+    color: var(--rara-subtle);
+}
+
+pre > .buttons button:hover {
+    border-color: var(--rara-pop);
+    color: var(--rara-pop);
+    background-color: var(--rara-ink-deep);
+}
+
+/* ===== Inline Code ===== */
+
+:not(pre):not(a) > .hljs,
+:not(pre) > code {
+    background: var(--rara-line) !important;
+    color: var(--rara-ink) !important;
+    padding: 2px 6px !important;
+    border-radius: 6px !important;
+    font-size: 0.875em;
+}
+
+/* ===== Blockquotes ===== */
+
+blockquote {
+    border-left: 3px solid var(--rara-pop) !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    background: var(--rara-bg) !important;
+    padding: 12px 16px !important;
+    border-radius: 0 8px 8px 0 !important;
+    margin: 16px 0 !important;
+    color: var(--rara-ink);
+}
+
+.blockquote-tag {
+    border-inline-start-width: 3px;
+}
+
+/* ===== Tables ===== */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table thead {
+    background: var(--rara-line) !important;
+}
+
+table thead th,
+table thead td {
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-weight: 700;
+    color: var(--rara-ink);
+    padding: 8px 16px;
+}
+
+table td {
+    padding: 8px 16px;
+    border-color: var(--rara-line);
+}
+
+table tbody tr:nth-child(2n) {
+    background: var(--rara-bg);
+}
+
+/* ===== Search ===== */
+
+#mdbook-searchbar {
+    border-radius: 8px;
+    border-color: var(--rara-line);
+    font-family: 'Nunito', system-ui, sans-serif;
+}
+
+#mdbook-searchbar:focus {
+    border-color: var(--rara-pop);
+    box-shadow: 0 0 0 3px rgba(232, 120, 138, 0.15) !important;
+    outline: none;
+}
+
+mark {
+    background-color: rgba(232, 120, 138, 0.25);
+    color: inherit;
+    border-radius: 2px;
+}
+
+#mdbook-searchresults a {
+    color: var(--rara-pop);
+}
+
+#mdbook-searchresults a:hover {
+    color: var(--rara-pop-hover);
+}
+
+/* ===== Navigation Arrows ===== */
+
+.nav-chapters:hover {
+    background-color: rgba(232, 120, 138, 0.05);
+    color: var(--rara-pop);
+}
+
+.mobile-nav-chapters {
+    background-color: var(--rara-bg);
+    border: 1px solid var(--rara-line);
+    border-radius: 8px;
+    color: var(--rara-muted);
+}
+
+.mobile-nav-chapters:hover {
+    color: var(--rara-pop);
+}
+
+/* ===== Help Popup ===== */
+
+#mdbook-help-popup {
+    border-color: var(--rara-line);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Scrollbar ===== */
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--rara-line);
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--rara-subtle);
+}
+
+/* ===== Focus States ===== */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--rara-pop);
+    outline-offset: 2px;
+}
+
+/* ===== Back to Site Link ===== */
+
+.sidebar .sidebar-scrollbox::after {
+    content: '← Back to site';
+    display: block;
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--rara-muted);
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--rara-line);
+    cursor: pointer;
+}
+
+/* ===== Syntax Highlight Overrides (dark code on light page) ===== */
+
+pre .hljs-keyword,
+pre .hljs-tag { color: #f0a1b1; }
+
+pre .hljs-string,
+pre .hljs-literal { color: #7bc4a0; }
+
+pre .hljs-number { color: #d4a0e0; }
+
+pre .hljs-comment { color: var(--rara-muted); font-style: italic; }
+
+pre .hljs-function,
+pre .hljs-title { color: #e8c47a; }
+
+pre .hljs-type,
+pre .hljs-built_in { color: #7ab8d4; }
+
+pre .hljs-attr,
+pre .hljs-attribute { color: #e8788a; }
+
+pre .hljs-symbol,
+pre .hljs-meta { color: var(--rara-subtle); }
+
+/* ===== Task List Checkboxes ===== */
+
+.content input[type="checkbox"] {
+    accent-color: var(--rara-pop);
+}
+
+/* ===== Reduced Motion ===== */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

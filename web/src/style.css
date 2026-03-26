@@ -184,6 +184,17 @@ html.js .features__grid .reveal:nth-child(6) { transition-delay: 400ms; }
   transform: translateY(-2px);
 }
 
+.btn--outline {
+  border: 2px solid var(--color-line);
+  color: var(--color-muted);
+  margin-left: var(--sp-4);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-pop);
+  color: var(--color-pop);
+}
+
 /* ===== Features ===== */
 .features {
   padding: var(--sp-20) 0;
