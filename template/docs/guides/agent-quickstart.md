@@ -68,16 +68,24 @@ After replacing placeholders, customize these files:
 | `src/main.rs` | Replace the `Hello` command dispatch with your own commands |
 | `cliff.toml` | Verify the `repo` field matches your GitHub repo name |
 
-### 1d. Verify Initialization
+### 1d. Initialize Development Environment
+
+```bash
+just init                    # Installs prek pre-commit hooks
+just pre-commit              # Verify all checks pass
+```
+
+### 1e. Verify Initialization
 
 ```bash
 cargo check                  # Must compile without errors
 cargo test                   # Baseline tests pass
 cargo run -- --help          # CLI shows your project name
 cargo run -- hello world     # Example command works
+cargo run -- --agent-describe # Agent schema outputs valid JSON
 ```
 
-### 1e. Clean Up Example Code
+### 1f. Clean Up Example Code
 
 Once your first real command is in place, remove the scaffolding:
 
@@ -99,8 +107,8 @@ src/
 ├── cli/
 │   └── mod.rs       # Clap definitions: Cli struct, Command enum, subcommand enums
 ├── error.rs         # AppError enum (snafu) — add variants for new error sources
-├── app_config.rs    # TOML config: AppConfig struct + load()/save()
-├── paths.rs         # ~/.{project-name}/ data directory resolution
+├── app_config.rs    # TOML config: AppConfig struct + init()/get()/save()
+├── paths.rs         # ~/.{project-name}/ data directory — init_data_dir()/data_dir()
 ├── http.rs          # Shared reqwest clients (client() + download_client())
 └── agent/           # AI agent CLI integration (usually don't need to modify)
     ├── mod.rs       # Re-exports
@@ -118,15 +126,19 @@ User input
 Cli::parse()              ← src/cli/mod.rs (clap derive)
   │
   ▼
+paths::init_data_dir()     ← src/paths.rs (validates + caches data dir)
+app_config::init()         ← src/app_config.rs (loads + caches config)
+  │
+  ▼
 match cli.command          ← src/main.rs (dispatch)
   │
   ├─▶ Your module logic    ← src/yourmodule/mod.rs
-  │     ├── reads config   ← app_config::load()
+  │     ├── reads config   ← app_config::get()
   │     ├── makes HTTP     ← http::client()
   │     └── returns data
   │
   ▼
-JSON output to stdout      ← serde_json::json!({"ok": true, ...})
+JSON output to stdout      ← AgentResponse::ok(data).print()
 Logs/errors to stderr      ← eprintln!() / tracing
 ```
 
@@ -459,8 +471,8 @@ let resp = http::client()
 ```rust
 use crate::app_config;
 
-// Read (cached, returns &'static AppConfig)
-let cfg = app_config::load();
+// Read (cached, returns &'static AppConfig — init() must have been called in main)
+let cfg = app_config::get();
 let dir = &cfg.download.output_dir;
 
 // Write
