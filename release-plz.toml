@@ -26,5 +26,14 @@ publish_allow_dirty = false
 # disable running `cargo-semver-checks`
 semver_check = false
 
-# disable cargo publish - not published to crates.io
+# disable cargo publish - not published to crates.io (default for binary crate)
 publish = false
+
+# Publish derive crate first (agent-describe depends on it)
+[[package]]
+name = "agent-describe-derive"
+publish = true
+
+[[package]]
+name = "agent-describe"
+publish = true

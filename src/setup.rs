@@ -1,7 +1,10 @@
-//! Setup command: collect parameters, validate, render template, run post-setup.
+//! Setup command: collect parameters, validate, render template, run
+//! post-setup.
 
-use std::io::{self, BufRead, Write};
-use std::path::PathBuf;
+use std::{
+    io::{self, BufRead, Write},
+    path::PathBuf,
+};
 
 use snafu::ResultExt;
 
@@ -10,9 +13,9 @@ use crate::error::{self, IoSnafu, ValidationSnafu};
 /// Collected setup parameters.
 pub struct SetupParams {
     pub project_name: String,
-    pub crate_name: String,
-    pub github_org: String,
-    pub output_dir: PathBuf,
+    pub crate_name:   String,
+    pub github_org:   String,
+    pub output_dir:   PathBuf,
 }
 
 /// Collect setup parameters from CLI args and interactive prompts.
@@ -43,10 +46,7 @@ pub fn collect_params(
 
     let crate_name = project_name.replace('-', "_");
 
-    let output_dir = path.map_or_else(
-        || PathBuf::from(&project_name),
-        |p| p.join(&project_name),
-    );
+    let output_dir = path.map_or_else(|| PathBuf::from(&project_name), |p| p.join(&project_name));
 
     if output_dir.exists() {
         return ValidationSnafu {

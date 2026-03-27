@@ -1,3 +1,7 @@
+[workspace]
+members = ["crates/agent-describe", "crates/agent-describe-derive"]
+resolver = "2"
+
 [package]
 name = "rara-cli-template"
 version = "0.1.0"

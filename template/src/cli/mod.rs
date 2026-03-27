@@ -1,13 +1,18 @@
 //! CLI command definitions and subcommand modules.
 
+use agent_describe::AgentDescribe;
 use clap::{Parser, Subcommand};
 
 /// Your CLI application — update this doc comment.
 #[derive(Parser)]
 #[command(name = "{{project-name}}", version)]
 pub struct Cli {
+    /// Output agent-describe schema (for AI agent discovery)
+    #[arg(long, hide = true)]
+    pub agent_describe: bool,
+
     #[command(subcommand)]
-    pub command: Command,
+    pub command: Option<Command>,
 }
 
 /// Available subcommands.
@@ -16,13 +21,15 @@ pub struct Cli {
 /// - JSON on stdout, human text on stderr
 /// - Every error includes a `suggestion` field
 /// - All parameters passable via flags (non-interactive)
-#[derive(Subcommand)]
+#[derive(Subcommand, AgentDescribe)]
+#[agent(cli = Cli)]
 pub enum Command {
     /// Say hello (example command — replace with your own)
     #[command(after_help = "\
 EXAMPLES:
     {{project-name}} hello
     {{project-name}} hello Alice")]
+    #[agent(output = crate::response::HelloResult)]
     Hello {
         /// Name to greet
         #[arg(default_value = "world")]
@@ -45,6 +52,7 @@ EXAMPLES:
 EXAMPLES:
     {{project-name}} agent \"explain this codebase\"
     {{project-name}} agent --backend codex \"refactor main.rs\"")]
+    #[agent(output = crate::response::AgentRunResult)]
     Agent {
         /// The prompt to send to the agent
         prompt: String,
