@@ -36,6 +36,7 @@ async fn run() -> error::Result<()> {
         return Ok(());
     }
 
+    // Initialize data directory and config (must precede any config/path access)
     {{crate_name}}::paths::init_data_dir()?;
     {{crate_name}}::app_config::init()?;
 
@@ -114,6 +115,10 @@ async fn run() -> error::Result<()> {
 
     Ok(())
 }
+
+// ── Config field registry ─────────────────────────────────────────────
+// When adding a new config section, update ALL THREE functions below:
+// set_config_field, get_config_field, config_as_map.
 
 /// Set a config field by dotted key path.
 fn set_config_field(cfg: &mut app_config::AppConfig, key: &str, value: &str) -> error::Result<()> {
