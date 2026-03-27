@@ -36,6 +36,8 @@ async fn run() -> error::Result<()> {
         return Ok(());
     }
 
+    {{crate_name}}::paths::init_data_dir()?;
+
     let command = cli.command.ok_or_else(|| {
         ConfigSnafu {
             message: "no command specified — try --help or --agent-describe".to_string(),
