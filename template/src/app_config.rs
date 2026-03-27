@@ -43,6 +43,10 @@ impl Default for ExampleConfig {
 ///
 /// Must be called once (typically at startup) before [`get`].
 pub fn init() -> error::Result<&'static AppConfig> {
+    if let Some(existing) = APP_CONFIG.get() {
+        return Ok(existing);
+    }
+
     let path = crate::paths::config_file();
     let cfg = if path.exists() {
         let settings = config::Config::builder()
