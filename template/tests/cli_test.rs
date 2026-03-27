@@ -80,3 +80,19 @@ fn config_get_unknown_key_fails() {
         .failure()
         .stdout(predicate::str::contains(r#""ok":false"#));
 }
+
+#[test]
+fn agent_describe_outputs_valid_schema() {
+    let assert = cmd()
+        .arg("--agent-describe")
+        .assert()
+        .success();
+
+    let output = assert.get_output();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let schema: serde_json::Value = serde_json::from_str(&stdout)
+        .expect("--agent-describe should output valid JSON");
+
+    assert_eq!(schema["protocol"], "agent-cli/1");
+    assert!(schema["commands"].as_array().unwrap().len() > 0);
+}
