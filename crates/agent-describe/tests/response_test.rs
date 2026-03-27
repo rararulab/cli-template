@@ -4,9 +4,13 @@ use serde_json::Value;
 #[test]
 fn ok_response_serializes_correctly() {
     #[derive(serde::Serialize)]
-    struct MyResult { url: String }
+    struct MyResult {
+        url: String,
+    }
 
-    let resp = AgentResponse::ok(MyResult { url: "https://example.com".into() });
+    let resp = AgentResponse::ok(MyResult {
+        url: "https://example.com".into(),
+    });
     let json: Value = serde_json::from_str(&resp.to_json()).unwrap();
 
     assert_eq!(json["ok"], true);

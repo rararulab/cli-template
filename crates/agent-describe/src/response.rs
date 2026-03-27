@@ -8,27 +8,26 @@ use serde::Serialize;
 #[serde(untagged)]
 pub enum AgentResponse<T: Serialize> {
     Ok {
-        ok: bool,
+        ok:   bool,
         data: T,
     },
     Err {
-        ok: bool,
-        error: String,
+        ok:         bool,
+        error:      String,
         suggestion: Option<String>,
     },
 }
 
 impl<T: Serialize> AgentResponse<T> {
     /// Create a success response wrapping the given data.
-    pub fn ok(data: T) -> Self {
-        Self::Ok { ok: true, data }
-    }
+    pub fn ok(data: T) -> Self { Self::Ok { ok: true, data } }
 
-    /// Create an error response with an optional suggestion for self-correction.
+    /// Create an error response with an optional suggestion for
+    /// self-correction.
     pub fn err(error: impl Into<String>, suggestion: Option<impl Into<String>>) -> Self {
         Self::Err {
-            ok: false,
-            error: error.into(),
+            ok:         false,
+            error:      error.into(),
             suggestion: suggestion.map(Into::into),
         }
     }

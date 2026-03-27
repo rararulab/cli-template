@@ -1,6 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Data, Fields, Type, Attribute, Meta, Expr, ExprLit, Lit};
+use syn::{
+    Attribute, Data, DeriveInput, Expr, ExprLit, Fields, Lit, Meta, Type, parse_macro_input,
+};
 
 /// Derive `AgentDescribe` for a Clap `Subcommand` enum.
 ///
@@ -12,8 +14,8 @@ pub fn derive_agent_describe(input: TokenStream) -> TokenStream {
 
     let enum_name = &input.ident;
 
-    let cli_type = extract_cli_type(&input.attrs)
-        .expect("#[agent(cli = CliType)] is required on the enum");
+    let cli_type =
+        extract_cli_type(&input.attrs).expect("#[agent(cli = CliType)] is required on the enum");
 
     let data = match &input.data {
         Data::Enum(data) => data,
@@ -59,10 +61,8 @@ pub fn derive_agent_describe(input: TokenStream) -> TokenStream {
         } else {
             // Regular variant: extract fields as args from macro analysis
             let output_type = extract_output_type(&variant.attrs).unwrap_or_else(|| {
-                let result_name = syn::Ident::new(
-                    &format!("{}Result", variant_name),
-                    variant_name.span(),
-                );
+                let result_name =
+                    syn::Ident::new(&format!("{}Result", variant_name), variant_name.span());
                 quote! { #result_name }
             });
 
@@ -159,7 +159,9 @@ fn extract_doc_comment(attrs: &[Attribute]) -> String {
                 return None;
             }
             if let Meta::NameValue(nv) = &attr.meta
-                && let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value
+                && let Expr::Lit(ExprLit {
+                    lit: Lit::Str(s), ..
+                }) = &nv.value
             {
                 return Some(s.value().trim().to_string());
             }

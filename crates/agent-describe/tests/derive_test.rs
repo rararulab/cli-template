@@ -16,7 +16,7 @@ enum TestCommand {
     /// Deploy to an environment
     Deploy {
         /// Target environment
-        env: String,
+        env:     String,
         /// Skip actual deployment
         #[arg(long)]
         dry_run: bool,
@@ -24,9 +24,7 @@ enum TestCommand {
 
     /// Show greeting
     #[agent(skip)]
-    Hello {
-        name: String,
-    },
+    Hello { name: String },
 
     /// Check system status
     #[agent(output = CustomStatusOutput)]
@@ -47,7 +45,7 @@ enum ConfigAction {
     /// Set a value
     Set {
         /// Config key
-        key: String,
+        key:   String,
         /// Config value
         value: String,
     },
@@ -60,13 +58,13 @@ enum ConfigAction {
 
 #[derive(Serialize, JsonSchema)]
 struct DeployResult {
-    url: String,
+    url:       String,
     took_secs: f64,
 }
 
 #[derive(Serialize, JsonSchema)]
 struct CustomStatusOutput {
-    healthy: bool,
+    healthy:     bool,
     uptime_secs: u64,
 }
 
@@ -78,7 +76,10 @@ fn schema_includes_deploy_but_not_hello() {
     assert_eq!(schema["name"], "testcli");
 
     let commands = schema["commands"].as_array().unwrap();
-    let names: Vec<&str> = commands.iter().map(|c| c["name"].as_str().unwrap()).collect();
+    let names: Vec<&str> = commands
+        .iter()
+        .map(|c| c["name"].as_str().unwrap())
+        .collect();
 
     assert!(names.contains(&"deploy"), "deploy should be in schema");
     assert!(!names.contains(&"hello"), "hello should be skipped");
@@ -94,7 +95,10 @@ fn deploy_has_args_and_output() {
     assert_eq!(deploy["description"], "Deploy to an environment");
 
     let args = deploy["args"].as_array().unwrap();
-    assert!(args.iter().any(|a| a["name"] == "env"), "should have env arg");
+    assert!(
+        args.iter().any(|a| a["name"] == "env"),
+        "should have env arg"
+    );
     assert!(
         args.iter()
             .any(|a| a["name"] == "--dry-run" && a["type"] == "bool"),
@@ -146,7 +150,10 @@ fn output_override_uses_custom_type() {
 fn subcommand_flattening_produces_separate_commands() {
     let schema = TestCommand::agent_schema();
     let commands = schema["commands"].as_array().unwrap();
-    let names: Vec<&str> = commands.iter().map(|c| c["name"].as_str().unwrap()).collect();
+    let names: Vec<&str> = commands
+        .iter()
+        .map(|c| c["name"].as_str().unwrap())
+        .collect();
 
     // Flattened subcommands should appear as "config set" and "config get"
     assert!(
@@ -167,10 +174,7 @@ fn subcommand_flattening_produces_separate_commands() {
     );
 
     // Verify args on "config set"
-    let config_set = commands
-        .iter()
-        .find(|c| c["name"] == "config set")
-        .unwrap();
+    let config_set = commands.iter().find(|c| c["name"] == "config set").unwrap();
     let args = config_set["args"].as_array().unwrap();
     let arg_names: Vec<&str> = args.iter().map(|a| a["name"].as_str().unwrap()).collect();
     assert!(
@@ -183,10 +187,7 @@ fn subcommand_flattening_produces_separate_commands() {
     );
 
     // Verify args on "config get"
-    let config_get = commands
-        .iter()
-        .find(|c| c["name"] == "config get")
-        .unwrap();
+    let config_get = commands.iter().find(|c| c["name"] == "config get").unwrap();
     let args = config_get["args"].as_array().unwrap();
     let arg_names: Vec<&str> = args.iter().map(|a| a["name"].as_str().unwrap()).collect();
     assert!(

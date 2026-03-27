@@ -2,9 +2,7 @@ use assert_cmd::Command;
 use predicates::prelude::predicate;
 use tempfile::TempDir;
 
-fn cmd() -> Command {
-    Command::cargo_bin("rara-cli-template").expect("binary should exist")
-}
+fn cmd() -> Command { Command::cargo_bin("rara-cli-template").expect("binary should exist") }
 
 #[test]
 fn setup_creates_project_with_all_flags() {

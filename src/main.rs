@@ -1,5 +1,4 @@
 use clap::Parser;
-
 use rara_cli_template::cli::{Cli, Command};
 
 #[tokio::main]

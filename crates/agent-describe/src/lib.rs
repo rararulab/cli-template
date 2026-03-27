@@ -4,4 +4,4 @@ pub mod response;
 pub mod schema;
 
 pub use response::AgentResponse;
-pub use schema::{args_from_clap_command, AgentSchema, ArgSchema, CommandSchema};
+pub use schema::{AgentSchema, ArgSchema, CommandSchema, args_from_clap_command};

@@ -21,7 +21,7 @@ enum DemoCommand {
     Deploy {
         /// Target environment
         #[arg(value_enum)]
-        env: Environment,
+        env:     Environment,
         /// Dry run
         #[arg(long)]
         dry_run: bool,
@@ -39,7 +39,7 @@ enum ConfigAction {
     /// Set a config value
     Set {
         /// Config key
-        key: String,
+        key:   String,
         /// Config value
         value: String,
     },
@@ -60,7 +60,7 @@ enum Environment {
 #[derive(Serialize, JsonSchema)]
 struct DeployResult {
     /// Deployment URL
-    url: String,
+    url:       String,
     /// Time taken in seconds
     took_secs: f64,
 }
@@ -77,7 +77,7 @@ fn main() {
     match cli.command {
         Some(DemoCommand::Deploy { env: _, dry_run: _ }) => {
             AgentResponse::ok(DeployResult {
-                url: "https://app.example.com".into(),
+                url:       "https://app.example.com".into(),
                 took_secs: 3.2,
             })
             .print();

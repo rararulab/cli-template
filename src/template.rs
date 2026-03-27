@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use include_dir::{include_dir, Dir};
+use include_dir::{Dir, include_dir};
 use snafu::ResultExt;
 
 use crate::error::{self, IoSnafu};
@@ -35,7 +35,11 @@ fn render_dir(
     github_org: &str,
 ) -> error::Result<()> {
     for entry in dir.dirs() {
-        let dir_name = entry.path().file_name().and_then(|n| n.to_str()).unwrap_or("");
+        let dir_name = entry
+            .path()
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("");
         if SKIP_PATTERNS.contains(&dir_name) {
             continue;
         }
@@ -93,7 +97,12 @@ fn is_text_file(path: &Path) -> bool {
     )
 }
 
-fn replace_placeholders(text: &str, project_name: &str, crate_name: &str, github_org: &str) -> String {
+fn replace_placeholders(
+    text: &str,
+    project_name: &str,
+    crate_name: &str,
+    github_org: &str,
+) -> String {
     text.replace("{{project-name}}", project_name)
         .replace("{{crate_name}}", crate_name)
         .replace("{{github-org}}", github_org)
