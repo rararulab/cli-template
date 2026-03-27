@@ -34,7 +34,8 @@ fn config_list() {
         .args(["config", "list"])
         .assert()
         .success()
-        .stdout(predicate::str::contains(r#""action":"config_list"#));
+        .stdout(predicate::str::contains(r#""ok":true"#))
+        .stdout(predicate::str::contains(r#""entries""#));
 }
 
 #[test]
