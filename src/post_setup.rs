@@ -86,6 +86,8 @@ fn print_agent_prompt(project_name: &str, project_dir: &Path) {
     eprintln!("1. Update CLAUDE.md with the project description");
     eprintln!("2. Replace the Hello example command with actual CLI commands");
     eprintln!("3. Customize ExampleConfig in src/app_config.rs");
-    eprintln!("4. Run `just pre-commit` to verify everything passes");
+    eprintln!("4. Test agent discovery: `{project_name} --agent-describe`");
+    eprintln!("5. Add new commands: define in cli/mod.rs, add {{Name}}Result in response.rs");
+    eprintln!("6. Run `just pre-commit` to verify everything passes");
     eprintln!("---");
 }
