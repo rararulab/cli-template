@@ -1,9 +1,11 @@
+use agent_describe::AgentResponse;
 use clap::Parser;
 use snafu::ResultExt;
 
 use {{crate_name}}::app_config;
 use {{crate_name}}::cli::{Cli, Command, ConfigAction};
 use {{crate_name}}::error::{self, AgentBackendSnafu, AgentExecutionSnafu, ConfigSnafu, IoSnafu};
+use {{crate_name}}::response::{AgentRunResult, ConfigGetResult, ConfigListResult, ConfigSetResult, HelloResult};
 
 #[tokio::main]
 async fn main() {
@@ -16,10 +18,11 @@ async fn main() {
 
     if let Err(e) = run().await {
         eprintln!("Error: {e}");
-        println!(
-            "{}",
-            serde_json::json!({"ok": false, "error": e.to_string(), "suggestion": "check --help for usage"})
-        );
+        AgentResponse::<()>::err(
+            e.to_string(),
+            Some("check --help or --agent-describe for usage"),
+        )
+        .print();
         std::process::exit(1);
     }
 }
@@ -27,47 +30,44 @@ async fn main() {
 async fn run() -> error::Result<()> {
     let cli = Cli::parse();
 
-    match cli.command {
+    if cli.agent_describe {
+        let schema = Command::agent_schema();
+        println!("{}", serde_json::to_string_pretty(&schema).expect("schema serialization should not fail"));
+        return Ok(());
+    }
+
+    let command = cli.command.ok_or_else(|| {
+        ConfigSnafu {
+            message: "no command specified — try --help or --agent-describe".to_string(),
+        }
+        .build()
+    })?;
+
+    match command {
         Command::Config { action } => match action {
             ConfigAction::Set { key, value } => {
                 let mut cfg = app_config::load().clone();
                 set_config_field(&mut cfg, &key, &value)?;
                 app_config::save(&cfg).context(IoSnafu)?;
                 eprintln!("set {key} = {value}");
-                println!(
-                    "{}",
-                    serde_json::json!({"ok": true, "action": "config_set", "key": key, "value": value})
-                );
+                AgentResponse::ok(ConfigSetResult { key, value }).print();
             }
             ConfigAction::Get { key } => {
                 let cfg = app_config::load();
                 let value = get_config_field(cfg, &key)?;
-                let display_value = value.as_deref().unwrap_or("(not set)");
-                println!(
-                    "{}",
-                    serde_json::json!({"ok": true, "action": "config_get", "key": key, "value": display_value})
-                );
+                AgentResponse::ok(ConfigGetResult { key, value }).print();
             }
             ConfigAction::List => {
                 let cfg = app_config::load();
-                let entries = config_as_map(cfg);
-                let map: serde_json::Map<String, serde_json::Value> = entries
-                    .into_iter()
-                    .map(|(k, v)| (k, serde_json::Value::String(v)))
-                    .collect();
-                println!(
-                    "{}",
-                    serde_json::json!({"ok": true, "action": "config_list", "entries": map})
-                );
+                let entries: std::collections::BTreeMap<String, String> =
+                    config_as_map(cfg).into_iter().collect();
+                AgentResponse::ok(ConfigListResult { entries }).print();
             }
         },
         Command::Hello { name } => {
             let greeting = format!("Hello, {name}!");
             eprintln!("{greeting}");
-            println!(
-                "{}",
-                serde_json::json!({"ok": true, "action": "hello", "greeting": greeting})
-            );
+            AgentResponse::ok(HelloResult { greeting }).print();
         }
         Command::Agent { prompt, backend } => {
             use {{crate_name}}::agent::{CliBackend, CliExecutor};
@@ -99,16 +99,13 @@ async fn run() -> error::Result<()> {
                 eprint!("{}", result.stderr);
             }
 
-            println!(
-                "{}",
-                serde_json::json!({
-                    "ok": result.success,
-                    "action": "agent_run",
-                    "exit_code": result.exit_code,
-                    "timed_out": result.timed_out,
-                    "output": result.output,
-                })
-            );
+            AgentResponse::ok(AgentRunResult {
+                success: result.success,
+                exit_code: result.exit_code,
+                timed_out: result.timed_out,
+                output: result.output,
+            })
+            .print();
         }
     }
 
