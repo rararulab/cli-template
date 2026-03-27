@@ -3,8 +3,10 @@
 use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
+use snafu::ResultExt;
 
 use crate::agent::AgentConfig;
+use crate::error::{self, ConfigParseSnafu};
 
 static APP_CONFIG: OnceLock<AppConfig> = OnceLock::new();
 
@@ -34,25 +36,39 @@ impl Default for ExampleConfig {
     }
 }
 
-/// Load config from TOML file, falling back to defaults.
+/// Load config from TOML file, cache in `OnceLock`, and return a reference.
 ///
-/// The result is cached in a `OnceLock` — subsequent calls return the same
-/// value even after [`save`]. This is fine for CLI usage (one command per
-/// process) but callers using this as a library should be aware of the
-/// caching behavior.
-pub fn load() -> &'static AppConfig {
-    APP_CONFIG.get_or_init(|| {
-        let path = crate::paths::config_file();
-        if path.exists() {
-            let settings = config::Config::builder()
-                .add_source(config::File::from(path.as_ref()))
-                .build()
-                .unwrap_or_default();
-            settings.try_deserialize().unwrap_or_default()
-        } else {
-            AppConfig::default()
-        }
-    })
+/// If the config file does not exist, `AppConfig::default()` is used.
+/// If the config file exists but is malformed, the parse error is returned.
+///
+/// Must be called once (typically at startup) before [`get`].
+pub fn init() -> error::Result<&'static AppConfig> {
+    if let Some(existing) = APP_CONFIG.get() {
+        return Ok(existing);
+    }
+
+    let path = crate::paths::config_file();
+    let cfg = if path.exists() {
+        let settings = config::Config::builder()
+            .add_source(config::File::from(path.as_ref()))
+            .build()
+            .context(ConfigParseSnafu)?;
+        settings.try_deserialize().context(ConfigParseSnafu)?
+    } else {
+        AppConfig::default()
+    };
+    Ok(APP_CONFIG.get_or_init(|| cfg))
+}
+
+/// Infallible accessor — returns the cached config.
+///
+/// # Panics
+///
+/// Panics if [`init`] has not been called yet.
+pub fn get() -> &'static AppConfig {
+    APP_CONFIG
+        .get()
+        .expect("app_config::init() must be called before app_config::get()")
 }
 
 /// Save config to TOML file.

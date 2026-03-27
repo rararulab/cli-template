@@ -224,7 +224,7 @@ impl CliExecutor {
 
     /// Terminates the child process gracefully via SIGTERM (Unix).
     #[cfg(unix)]
-    fn terminate_child(child: &tokio::process::Child) {
+    fn terminate_child(child: &mut tokio::process::Child) {
         if let Some(pid) = child.id() {
             #[allow(clippy::cast_possible_wrap)]
             let pid = Pid::from_raw(pid as i32);

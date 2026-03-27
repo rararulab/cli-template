@@ -36,6 +36,10 @@ async fn run() -> error::Result<()> {
         return Ok(());
     }
 
+    // Initialize data directory and config (must precede any config/path access)
+    {{crate_name}}::paths::init_data_dir()?;
+    {{crate_name}}::app_config::init()?;
+
     let command = cli.command.ok_or_else(|| {
         ConfigSnafu {
             message: "no command specified — try --help or --agent-describe".to_string(),
@@ -46,19 +50,19 @@ async fn run() -> error::Result<()> {
     match command {
         Command::Config { action } => match action {
             ConfigAction::Set { key, value } => {
-                let mut cfg = app_config::load().clone();
+                let mut cfg = app_config::get().clone();
                 set_config_field(&mut cfg, &key, &value)?;
                 app_config::save(&cfg).context(IoSnafu)?;
                 eprintln!("set {key} = {value}");
                 AgentResponse::ok(ConfigSetResult { key, value }).print();
             }
             ConfigAction::Get { key } => {
-                let cfg = app_config::load();
+                let cfg = app_config::get();
                 let value = get_config_field(cfg, &key)?;
                 AgentResponse::ok(ConfigGetResult { key, value }).print();
             }
             ConfigAction::List => {
-                let cfg = app_config::load();
+                let cfg = app_config::get();
                 let entries: std::collections::BTreeMap<String, String> =
                     config_as_map(cfg).into_iter().collect();
                 AgentResponse::ok(ConfigListResult { entries }).print();
@@ -72,7 +76,7 @@ async fn run() -> error::Result<()> {
         Command::Agent { prompt, backend } => {
             use {{crate_name}}::agent::{CliBackend, CliExecutor};
 
-            let cfg = app_config::load();
+            let cfg = app_config::get();
             let mut agent_cfg = cfg.agent.clone();
             if let Some(b) = backend {
                 agent_cfg.backend = b;
@@ -111,6 +115,10 @@ async fn run() -> error::Result<()> {
 
     Ok(())
 }
+
+// ── Config field registry ─────────────────────────────────────────────
+// When adding a new config section, update ALL THREE functions below:
+// set_config_field, get_config_field, config_as_map.
 
 /// Set a config field by dotted key path.
 fn set_config_field(cfg: &mut app_config::AppConfig, key: &str, value: &str) -> error::Result<()> {

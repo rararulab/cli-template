@@ -65,9 +65,17 @@ build-release:
 # Run all pre-commit checks
 pre-commit: fmt-check lint test
 
-# Install git hooks via prek
-setup-hooks:
+# Initialize prek pre-commit hooks (first-time setup)
+prek-init:
     prek install
+    @echo "Pre-commit hooks installed. Run 'just pre-commit' to verify."
+
+# Install git hooks via prek (alias for prek-init)
+setup-hooks: prek-init
+
+# Initialize full development environment
+init: prek-init
+    @echo "Development environment ready."
 
 # ─── Changelog & Release ─────────────────────────────────────────────
 

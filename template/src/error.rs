@@ -24,6 +24,12 @@ pub enum AppError {
     #[snafu(display("config error: {message}"))]
     Config { message: String },
 
+    #[snafu(display("config parse error: {source}"))]
+    ConfigParse { source: config::ConfigError },
+
+    #[snafu(display("path resolution failed: {message}"))]
+    PathResolution { message: String },
+
     #[snafu(display("agent execution failed: {source}"))]
     AgentExecution { source: std::io::Error },
 
