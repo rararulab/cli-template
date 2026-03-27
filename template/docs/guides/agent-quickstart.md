@@ -476,7 +476,7 @@ let cfg = app_config::get();
 let dir = &cfg.download.output_dir;
 
 // Write
-let mut cfg = app_config::load().clone();
+let mut cfg = app_config::get().clone();
 cfg.download.max_concurrent = 8;
 app_config::save(&cfg).context(IoSnafu)?;
 ```
