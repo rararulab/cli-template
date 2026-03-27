@@ -120,6 +120,38 @@ This template follows [rararulab agent-friendly CLI standards](https://github.co
 - **Non-interactive** — every parameter passable via flags
 - **Example-driven help** — each subcommand shows runnable examples in `--help`
 
+## Agent Integration
+
+This CLI implements the `agent-cli/1` protocol, making it self-describing for AI agents.
+
+### Discovery
+
+```bash
+{{project-name}} --agent-describe
+```
+
+Outputs a JSON schema describing all commands, their arguments, and response formats. Any AI agent can use this to learn the CLI's capabilities without reading documentation.
+
+### Response Format
+
+All commands output structured JSON to stdout:
+
+```json
+{"ok": true, "data": {"field": "value"}}
+```
+
+Errors include self-correction hints:
+
+```json
+{"ok": false, "error": "message", "suggestion": "try this instead"}
+```
+
+### Adding New Commands
+
+1. Add the command variant to `src/cli/mod.rs`
+2. Create `{CommandName}Result` struct in `src/response.rs` with `#[derive(Serialize, JsonSchema)]`
+3. Use `AgentResponse::ok(result).print()` in the handler
+
 ## Project Structure
 
 ```
