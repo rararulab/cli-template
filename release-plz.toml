@@ -29,6 +29,12 @@ semver_check = false
 # disable cargo publish - not published to crates.io (default for binary crate)
 publish = false
 
+# Root binary crate — not released via release-plz
+[[package]]
+name = "rara-cli-template"
+release = false
+changelog_update = false
+
 # Publish derive crate first (agent-describe depends on it)
 [[package]]
 name = "agent-describe-derive"
