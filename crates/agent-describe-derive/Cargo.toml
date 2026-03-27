@@ -1,0 +1,15 @@
+[package]
+name = "agent-describe-derive"
+version = "0.1.0"
+edition = "2024"
+description = "Derive macro for agent-describe"
+license = "MIT"
+repository = "https://github.com/rararulab/agent-describe"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["full", "extra-traits"] }

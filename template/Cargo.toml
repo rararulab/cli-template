@@ -22,7 +22,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "io
 toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-agent-describe = { path = "/Users/ryan/code/rararulab/agent-describe/agent-describe" }
+agent-describe = "0.1"
 
 [dev-dependencies]
 assert_cmd = "2"
