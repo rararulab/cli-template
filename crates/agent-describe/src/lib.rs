@@ -1,3 +1,5 @@
+//! Self-describing CLI protocol for AI agents (`agent-cli/1`).
+
 pub use agent_describe_derive::AgentDescribe;
 
 pub mod response;
