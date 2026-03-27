@@ -1,15 +1,18 @@
-name: Release PR
+name: Publish
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
 
 permissions:
-  pull-requests: write
   contents: write
 
 jobs:
   release-plz:
+    if: >-
+      github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.title, 'chore: release')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +21,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: MarcoIeni/release-plz-action@v0.5
         with:
-          command: release-pr
+          command: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
